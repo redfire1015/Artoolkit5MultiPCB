@@ -27,6 +27,13 @@ public:
 
 	const XYCoord& getEndCoord() const;
 
+	void setSegmantThickness(float thickness_in);
+
+	void setStartCoord(XYCoord Start_in);
+
+	void SetEndCoord(XYCoord End_in);
+
+
 	// Destructor
 	~Segment();
 

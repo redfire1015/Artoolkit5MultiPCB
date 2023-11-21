@@ -35,6 +35,19 @@ const XYCoord& Segment::getStartCoord()  const { return startCoord; }
 
 const XYCoord& Segment::getEndCoord()  const { return endCoord; }
 
+void Segment::setSegmantThickness(float thickness_in)
+{
+	SegmentThickness = thickness_in;
+}
+
+void Segment::setStartCoord(XYCoord Start_in) {
+	startCoord = Start_in;
+}
+
+void Segment::SetEndCoord(XYCoord End_in) {
+	endCoord = End_in;
+}
+
 // Destructor
 Segment::~Segment()
 {

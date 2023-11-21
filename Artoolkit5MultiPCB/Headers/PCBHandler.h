@@ -6,11 +6,11 @@
 #include <iomanip>  // Include for std::setprecision
 #include <iostream>
 
-void LoadPCB(PCB& input);
+void LoadPCB(PCB& input, XYCoord& markerOrigin);
 
 double calculateDistance(const XYCoord& point1, const XYCoord& point2);
 
-void LoadMarkerConfiguation(char* markerFilePath);
+XYCoord LoadMarkerConfiguation(char* markerFilePath);
 
 
 #endif

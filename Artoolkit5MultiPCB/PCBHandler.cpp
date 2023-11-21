@@ -1,9 +1,11 @@
 #include "Headers/PCBhandler.h"
 
-void LoadPCB(PCB& input) {
+void LoadPCB(PCB& input, XYCoord& markerOrigin) { //Needs to Be adjusted for locaztion of markers
 
 	//Populating Segments 
 	float segWidth = 0.25; //All segments have the same width for testing
+
+	//This is the coordinates from KiCad so going to modify based on relative location
 
 	XYCoord seg1Start(125.867349, 80.01);
 	XYCoord seg1End(152.48, 80.01);
@@ -24,6 +26,36 @@ void LoadPCB(PCB& input) {
 
 	// Create an array of segments
 	Segment segmentsArray[] = { segment1, segment2, segment3, segment4 };
+
+	//Modifying the segment array so that the values are in relation to the origin marker
+	for (int i = 0; i < sizeof(segmentsArray) / sizeof(Segment); i++)
+	{
+		XYCoord tempStartCoord = segmentsArray[i].getStartCoord();
+		XYCoord tempEndCoord = segmentsArray[i].getEndCoord();
+
+		float tempStartXCoord = tempStartCoord.getXCoord();
+		float tempStartYCoord = tempStartCoord.getYCoord();
+
+		float tempEndXCoord = tempEndCoord.getXCoord();
+		float tempEndYCoord = tempEndCoord.getXCoord();
+
+		//XCoord Processing
+		//XCoord system the same as normal
+		float tempStartRelativeX = tempStartXCoord - markerOrigin.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
+		float tempEndRelativeX = tempEndXCoord - markerOrigin.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
+
+		////YCoord Processing 
+		////YCoords flipped positve negative direction so have to process
+		float tempStartRelativeY = markerOrigin.getYCoord() - tempStartYCoord;
+		float tempEndRelativeY = markerOrigin.getYCoord() - tempEndYCoord;
+
+		//Repopulate segments with modified values
+		XYCoord tempStartRelativeCoord(tempStartRelativeX, tempStartRelativeY);
+		XYCoord tempEndRelativeCoord(tempEndRelativeX, tempEndRelativeY);
+
+		segmentsArray[i].setStartCoord(tempStartRelativeCoord);
+		segmentsArray[i].SetEndCoord(tempEndRelativeCoord);
+	}
 
 	//Populating Polygons
 	  /*Leave for now*/
@@ -62,7 +94,7 @@ void LoadPCB(PCB& input) {
 	PCB myPCB("MyPCB", (sizeof(layerArray) / sizeof(Layer)), layerNames, layerArray);
 
 	// // Test some getters
-	std::cout << "PCB Name: " << myPCB.getPCBName() << std::endl;
+	//std::cout << "PCB Name: " << myPCB.getPCBName() << std::endl;
 
 	//for (size_t i = 0; i < myPCB.getNumberOfLayers(); ++i)
 	//{
@@ -71,7 +103,7 @@ void LoadPCB(PCB& input) {
 	//	std::cout << "Number of Polygons: " << myPCB.getPCBLayers()[i].getNumberOfLayerPolygons() << std::endl;
 	//}
 
-	//// Print information about segments and polygons
+	// Print information about segments and polygons
 	//for (size_t i = 0; i < myPCB.getNumberOfLayers(); ++i)
 	//{
 	//	std::cout << "Layer Name: " << myPCB.getPCBLayerNames()[i] << std::endl;
@@ -99,7 +131,9 @@ double calculateDistance(const XYCoord& point1, const XYCoord& point2) {
 	return std::sqrt(std::pow(point2.getXCoord() - point1.getXCoord(), 2) + std::pow(point2.getYCoord() - point1.getYCoord(), 2));
 }
 
-void LoadMarkerConfiguation(char* markerFilePath) {
+XYCoord LoadMarkerConfiguation(char* markerFilePath) {
+
+	int scalingFactor = 2;
 
 	//Marker Size 40 - Assume all the same size for now (can later be modified so size is calculated from PCB file)
 	float markerSize = 40.0;
@@ -157,23 +191,15 @@ void LoadMarkerConfiguation(char* markerFilePath) {
 		float tempXCoord;
 		float tempYCoord;
 
-		if (markers[i].getXCoord() > originMarker.getXCoord()) {
-			tempXCoord = markers[i].getXCoord() - originMarker.getXCoord();
-		}
-		else
-		{
-			tempXCoord = originMarker.getXCoord() - markers[i].getXCoord();
-		}
+		//XCoord Processing
+		//XCoord system the same as normal
+		tempXCoord = markers[i].getXCoord() - originMarker.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
 
-		if (markers[i].getYCoord() < originMarker.getYCoord()) {
-			tempYCoord = markers[i].getYCoord() - originMarker.getYCoord();
-		}
-		else
-		{
-			tempYCoord = originMarker.getYCoord() - markers[i].getYCoord();
-		}
+		//YCoord Processing 
+		//YCoords flipped positve negative direction so have to process
+		tempYCoord = originMarker.getYCoord() - markers[i].getYCoord();
 
-		//relativeLocations[i].setXYCoord((markers[i].getXCoord() - originMarker.getXCoord()), (markers[i].getYCoord() - originMarker.getYCoord()));
+		//relativeLocations[i].setXYCoord((markers[i].getXCoord() - originMarker.getXCoord()), (markers[i].getYCoord() - originMarker.getYCoord())); //WRONG!!
 		relativeLocations[i].setXYCoord(tempXCoord, tempYCoord);
 	}
 
@@ -194,8 +220,8 @@ void LoadMarkerConfiguation(char* markerFilePath) {
 			outputFile << std::fixed << std::setprecision(1);
 			outputFile << markerSize << std::endl;
 			outputFile << std::fixed << std::setprecision(4);
-			outputFile << rotationMatrixX << relativeLocations[i].getXCoord() * 2 << std::endl; //Kicad has scaled the in the PCB editor by 2! Not sure how/ why this has happened
-			outputFile << rotationMatrixY << relativeLocations[i].getYCoord() * 2 << std::endl;
+			outputFile << rotationMatrixX << relativeLocations[i].getXCoord() * scalingFactor << std::endl; //Kicad has scaled the in the PCB editor by 2! Not sure how/ why this has happened
+			outputFile << rotationMatrixY << relativeLocations[i].getYCoord() * scalingFactor << std::endl;
 			outputFile << rotationMatrixZ << std::endl;
 			outputFile << "" << std::endl;
 		}
@@ -209,4 +235,5 @@ void LoadMarkerConfiguation(char* markerFilePath) {
 	}
 
 	//return origin point for later use?
+	return (originMarker);
 }

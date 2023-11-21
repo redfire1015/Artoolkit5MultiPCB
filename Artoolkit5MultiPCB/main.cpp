@@ -74,6 +74,12 @@
 
  //My Includes
 #include "Headers/PCBHandler.h"
+XYCoord originMarkerPos;
+PCB loadedPCB;
+
+int             xsize, ysize; //moved from init statement
+
+//End My Includes
 
 ARHandle* arHandle;
 AR3DHandle* ar3DHandle;
@@ -233,7 +239,6 @@ static void   init(int argc, char* argv[])
 	ARPattHandle* arPattHandle;
 	char            vconf[512];
 	char            configName[512];
-	int             xsize, ysize;
 	AR_PIXEL_FORMAT pixFormat;
 	int             i;
 
@@ -272,8 +277,10 @@ static void   init(int argc, char* argv[])
 			printf("Memory allocation failed.\n");
 		}
 
-		LoadMarkerConfiguation(markerConfigFilePath);
+		//int scalingFactor = 2; //May be used
+		originMarkerPos = LoadMarkerConfiguation(markerConfigFilePath);
 
+		LoadPCB(loadedPCB, originMarkerPos); //Populates loadedPCB with PCB data
 
 		configName[0] = '\0';
 		vconf[0] = '\0';
@@ -373,6 +380,7 @@ static void draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode)
 	GLfloat   mat_diffuse1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	int       debugMode;
 
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
@@ -415,6 +423,12 @@ static void draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode)
 	if (debugMode == 0) glutSolidCube(40.0);
 	else                glutWireCube(40.0);
 	glPopMatrix();
+
+	// Draw a line
+	glBegin(GL_LINES);
+	glVertex3f(-50.0f, -50.0f, 0.0f);
+	glVertex3f(50.0f, 50.0f, 0.0f);
+	glEnd();
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
