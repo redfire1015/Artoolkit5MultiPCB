@@ -1,6 +1,6 @@
 #include "Headers/PCBhandler.h"
 
-void LoadPCB(PCB& input, XYCoord& markerOrigin) { //Needs to Be adjusted for locaztion of markers
+void LoadPCB(PCB& input) { //Needs to Be adjusted for locaztion of markers
 
 	//Populating Segments 
 	float segWidth = 0.25; //All segments have the same width for testing
@@ -26,36 +26,6 @@ void LoadPCB(PCB& input, XYCoord& markerOrigin) { //Needs to Be adjusted for loc
 
 	// Create an array of segments
 	Segment segmentsArray[] = { segment1, segment2, segment3, segment4 };
-
-	//Modifying the segment array so that the values are in relation to the origin marker
-	for (int i = 0; i < sizeof(segmentsArray) / sizeof(Segment); i++)
-	{
-		XYCoord tempStartCoord = segmentsArray[i].getStartCoord();
-		XYCoord tempEndCoord = segmentsArray[i].getEndCoord();
-
-		float tempStartXCoord = tempStartCoord.getXCoord();
-		float tempStartYCoord = tempStartCoord.getYCoord();
-
-		float tempEndXCoord = tempEndCoord.getXCoord();
-		float tempEndYCoord = tempEndCoord.getXCoord();
-
-		//XCoord Processing
-		//XCoord system the same as normal
-		float tempStartRelativeX = tempStartXCoord - markerOrigin.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
-		float tempEndRelativeX = tempEndXCoord - markerOrigin.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
-
-		////YCoord Processing 
-		////YCoords flipped positve negative direction so have to process
-		float tempStartRelativeY = markerOrigin.getYCoord() - tempStartYCoord;
-		float tempEndRelativeY = markerOrigin.getYCoord() - tempEndYCoord;
-
-		//Repopulate segments with modified values
-		XYCoord tempStartRelativeCoord(tempStartRelativeX, tempStartRelativeY);
-		XYCoord tempEndRelativeCoord(tempEndRelativeX, tempEndRelativeY);
-
-		segmentsArray[i].setStartCoord(tempStartRelativeCoord);
-		segmentsArray[i].SetEndCoord(tempEndRelativeCoord);
-	}
 
 	//Populating Polygons
 	  /*Leave for now*/
@@ -91,7 +61,11 @@ void LoadPCB(PCB& input, XYCoord& markerOrigin) { //Needs to Be adjusted for loc
 		layerNames[i] = layerArray[i].getLayerName();
 	}
 
-	PCB myPCB("MyPCB", (sizeof(layerArray) / sizeof(Layer)), layerNames, layerArray);
+	input.setNumberOfLayers((sizeof(layerArray) / sizeof(Layer)));
+	input.setPCBName("inputPCB");
+	input.setPCBLayerNames(layerNames, input.getNumberOfLayers());
+	input.setPCBLayers(layerArray, input.getNumberOfLayers());
+
 
 	// // Test some getters
 	//std::cout << "PCB Name: " << myPCB.getPCBName() << std::endl;
@@ -193,11 +167,13 @@ XYCoord LoadMarkerConfiguation(char* markerFilePath) {
 
 		//XCoord Processing
 		//XCoord system the same as normal
-		tempXCoord = markers[i].getXCoord() - originMarker.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
+		//tempXCoord = markers[i].getXCoord() - originMarker.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
+		tempXCoord = markers[i].getXCoord();
 
 		//YCoord Processing 
 		//YCoords flipped positve negative direction so have to process
-		tempYCoord = originMarker.getYCoord() - markers[i].getYCoord();
+		//tempYCoord = originMarker.getYCoord() - markers[i].getYCoord();
+		tempYCoord = -markers[i].getYCoord();
 
 		//relativeLocations[i].setXYCoord((markers[i].getXCoord() - originMarker.getXCoord()), (markers[i].getYCoord() - originMarker.getYCoord())); //WRONG!!
 		relativeLocations[i].setXYCoord(tempXCoord, tempYCoord);

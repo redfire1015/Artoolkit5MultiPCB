@@ -111,6 +111,7 @@ static void             draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int m
 static void             keyEvent(unsigned char key, int x, int y);
 
 //MY FUNCTIONS
+void drawPCB(ARdouble trans1[3][4]);
 void runSecondWindow()
 {
 
@@ -400,10 +401,12 @@ static void mainLoop(void)
 	glClearDepth(1.0);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	for (i = 0; i < config->marker_num; i++) { //Only want to do this once for one marker
-		if (config->marker[i].visible >= 0) draw(config->trans, config->marker[i].trans, 0); //Dont really need second transform matrix
-		else                                 draw(config->trans, config->marker[i].trans, 1);
-	}
+	//for (i = 0; i < config->marker_num; i++) { //Only want to do this once for one marker
+	//	if (config->marker[i].visible >= 0) draw(config->trans, config->marker[i].trans, 0); //Dont really need second transform matrix
+	//	else                                 draw(config->trans, config->marker[i].trans, 1);
+	//}
+
+	drawPCB(config->trans);
 
 	argSwapBuffers();
 }
@@ -456,7 +459,7 @@ static void   init(int argc, char* argv[])
 		//int scalingFactor = 2; //May be used
 		originMarkerPos = LoadMarkerConfiguation(markerConfigFilePath);
 
-		LoadPCB(loadedPCB, originMarkerPos); //Populates loadedPCB with PCB data
+		LoadPCB(loadedPCB); //Populates loadedPCB with PCB data
 
 		configName[0] = '\0';
 		vconf[0] = '\0';
@@ -572,7 +575,7 @@ static void draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode)
 #ifdef ARDOUBLE_IS_FLOAT
 	glMultMatrixf(gl_para);
 #else
-	//glMultMatrixd(gl_para); //Try commenting this out This is translation to marker location. Only want to draw from coordinate origin.
+	glMultMatrixd(gl_para); //Try commenting this out This is translation to marker location. Only want to draw from coordinate origin.
 #endif
 
 	glEnable(GL_LIGHTING);
@@ -607,4 +610,54 @@ static void draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode)
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
+}
+
+void drawPCB(ARdouble trans1[3][4]) {
+
+	ARdouble  gl_para[16];
+	int       debugMode;
+
+	/* load the camera transformation matrix */
+	glMatrixMode(GL_MODELVIEW);
+	argConvGlpara(trans1, gl_para);
+#ifdef ARDOUBLE_IS_FLOAT
+	glLoadMatrixf(gl_para);
+#else
+	glLoadMatrixd(gl_para);
+#endif
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, 10.0f);
+	arGetDebugMode(arHandle, &debugMode);
+
+	//std::cout << glGetError() << std::endl;
+	// 
+	//float lineWidth[2];
+	//glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
+	//gets Supported widths and returns into  array - Not in this case we are told 0.5-10 on GTX1060 on windows 11
+
+	//Print information about segments and polygons
+	for (size_t i = 0; i < loadedPCB.getNumberOfLayers(); ++i)
+	{
+		const Layer& currentLayer = loadedPCB.getPCBLayers()[i];
+		// Print information about segments
+		for (int j = 0; j < currentLayer.getNumberOfLayerSegments(); ++j)
+		{
+			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
+			//currentSegment.getSegmentThickness()
+			if (currentLayer.getLayerName() == "F.Cu") {
+				glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
+				glBegin(GL_LINES);
+				glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
+				glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
+				glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
+				glEnd();
+			}
+
+		}
+	}
+
+	glPopMatrix();
+
 }
