@@ -69,17 +69,32 @@
 #include <AR/video.h>
 #include <AR/arMulti.h>
 
-#define                 CPARA_NAME       "Data/camera_para.dat"
+ //#define                 CPARA_NAME       "Data/camera_para.dat"
+ //#define                 CPARA_NAME       "Data/jamesCamCalib.dat"
+#define                 CPARA_NAME       "Data/paulCamCalib.dat"
+
 #define                 CONFIG_NAME      "Data/marker.dat"
 
  //My Includes
 #include "Headers/PCBHandler.h"
+#include "IMGUI/imgui.h"
+#include "IMGUI/imgui_impl_glut.h"
+#include "IMGUI/imgui_impl_opengl2.h"
+//End My Includes
+
+//My Global Variables
 XYCoord originMarkerPos;
 PCB loadedPCB;
-
 int             xsize, ysize; //moved from init statement
 
-//End My Includes
+//IMGUI Variables
+// 
+// Our state
+static bool show_demo_window = true;
+static bool show_another_window = false;
+static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+//End My Global Variables
 
 ARHandle* arHandle;
 AR3DHandle* ar3DHandle;
@@ -95,11 +110,171 @@ static void             mainLoop(void);
 static void             draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode);
 static void             keyEvent(unsigned char key, int x, int y);
 
+//MY FUNCTIONS
+void runSecondWindow()
+{
+
+	// Start the Dear ImGui frame
+	ImGui_ImplOpenGL2_NewFrame();
+	ImGui_ImplGLUT_NewFrame();
+	ImGui::NewFrame();
+	ImGuiIO& io = ImGui::GetIO();
+
+	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+	if (show_demo_window)
+		ImGui::ShowDemoWindow(&show_demo_window);
+
+	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+	{
+		static float f = 0.0f;
+		static int counter = 0;
+
+		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Another Window", &show_another_window);
+
+		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			counter++;
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+		ImGui::End();
+	}
+
+	// 3. Show another simple window.
+	if (show_another_window)
+	{
+		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Text("Hello from another window!");
+		if (ImGui::Button("Close Me"))
+			show_another_window = false;
+		ImGui::End();
+	}
+
+	// Rendering
+	ImGui::Render();
+	glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
+	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+	glClear(GL_COLOR_BUFFER_BIT);
+	//glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound, but prefer using the GL3+ code.
+	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
+	glutSwapBuffers();
+	glutPostRedisplay();
+}
+
+void createSecondWindow() {
+	glutInitWindowSize(1280, 720);
+	glutCreateWindow("Setting Menu");
+
+	// Setup GLUT display function
+	// We will also call ImGui_ImplGLUT_InstallFuncs() to get all the other functions installed for us,
+	// otherwise it is possible to install our own functions and call the imgui_impl_glut.h functions ourselves.
+	glutDisplayFunc(runSecondWindow);
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsLight();
+
+	// Setup Platform/Renderer backends
+	// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
+	ImGui_ImplGLUT_Init();
+	ImGui_ImplOpenGL2_Init();
+
+	// Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
+	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+	// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
+	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+	ImGui_ImplGLUT_InstallFuncs();
+
+
+	// Load Fonts
+	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
+	// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
+	// - If the file cannot be loaded, the function will return a nullptr. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
+	// - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
+	// - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
+	// - Read 'docs/FONTS.md' for more instructions and details.
+	// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
+	//io.Fonts->AddFontDefault();
+	//io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
+	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
+	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
+	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
+	//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+	//IM_ASSERT(font != nullptr);
+
+	// Main loop
+	glutMainLoop();
+
+	// Cleanup
+	ImGui_ImplOpenGL2_Shutdown();
+	ImGui_ImplGLUT_Shutdown();
+	ImGui::DestroyContext();
+}
+
+void menu(int id)
+{
+	switch (id)
+	{
+	case 1: {
+		// Code for Option 1
+		OPENFILENAME ofn;
+		TCHAR szFileName[MAX_PATH] = { 0 };
+
+		// Initialize OPENFILENAME
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = NULL;
+		ofn.lpstrFile = szFileName;
+		ofn.nMaxFile = sizeof(szFileName);
+		ofn.lpstrFilter = L"All Files (*.*)\0*.*\0";
+		ofn.nFilterIndex = 1;
+		ofn.lpstrFileTitle = NULL;
+		ofn.nMaxFileTitle = 0;
+		ofn.lpstrInitialDir = NULL;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+		if (GetOpenFileName(&ofn) == TRUE)
+		{
+			// The user selected a file, and the file path is in szFileName
+			// You can use szFileName for further processing
+			MessageBox(NULL, szFileName, L"File Selected", MB_OK);
+		}
+
+		break;
+	}
+
+	case 2: {
+		createSecondWindow();
+		break;
+	}
+	}
+}
+//END MY FUNCTIONS
 
 int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	init(argc, argv);
+
+	glutCreateMenu(menu);
+	glutAddMenuEntry("Select a PCB file to Load", 1);	//Option 1
+	glutAddMenuEntry("Select PCB Layers to Display", 2);//Option 2
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	argSetDispFunc(mainLoop, 1);
 	argSetKeyFunc(keyEvent);
@@ -224,8 +399,9 @@ static void mainLoop(void)
 	argDrawMode3D(vp);
 	glClearDepth(1.0);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	for (i = 0; i < config->marker_num; i++) {
-		if (config->marker[i].visible >= 0) draw(config->trans, config->marker[i].trans, 0);
+
+	for (i = 0; i < config->marker_num; i++) { //Only want to do this once for one marker
+		if (config->marker[i].visible >= 0) draw(config->trans, config->marker[i].trans, 0); //Dont really need second transform matrix
 		else                                 draw(config->trans, config->marker[i].trans, 1);
 	}
 
@@ -396,7 +572,7 @@ static void draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode)
 #ifdef ARDOUBLE_IS_FLOAT
 	glMultMatrixf(gl_para);
 #else
-	glMultMatrixd(gl_para);
+	//glMultMatrixd(gl_para); //Try commenting this out This is translation to marker location. Only want to draw from coordinate origin.
 #endif
 
 	glEnable(GL_LIGHTING);
@@ -420,16 +596,14 @@ static void draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode)
 	glPushMatrix();
 	glTranslatef(0.0f, 0.0f, 20.0f);
 	arGetDebugMode(arHandle, &debugMode);
+
+
+
 	if (debugMode == 0) glutSolidCube(40.0);
 	else                glutWireCube(40.0);
+
+
 	glPopMatrix();
-
-	// Draw a line
-	glBegin(GL_LINES);
-	glVertex3f(-50.0f, -50.0f, 0.0f);
-	glVertex3f(50.0f, 50.0f, 0.0f);
-	glEnd();
-
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
