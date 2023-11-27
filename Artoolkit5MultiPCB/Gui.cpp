@@ -21,21 +21,23 @@ int selectedTestPoint = 0; // Index of the selected TestPoint
 int selectedWaveform = 0; // Index of the selected Waveform
 
 // Min and max values for the Voltage input
-const float minVoltage = 0.0f;
-const float maxVoltage = 5.0f;
+double minVoltage = 0.0f;
+double maxVoltage = 5.0f;
 
 const char* testPoints[] = { "TP1", "TP2", "TP3" };
 const char* waveforms[] = { "Sawtooth", "Square", "Triangle", "DC" };
 
 //Simulation Parameters
-float simulationTime = 0.0f;
-float timeStep = 0.01f;  // Default time step
-float startTime = 0.0f;
-float endTime = 10.0f;
+double simulationTime = 0.0f;
+double timeStep = 0.01f;  // Default time step
+double startTime = 0.0f;
+double endTime = 10.0f;
 
 int selectedComPortIndex = 0; // Initialize with the first COM port
 
 std::vector<std::string> comPortList; //List of available Com ports
+
+extern PCB loadedPCB;
 
 PCBDisplaySetting pcbSettings; //List of PCB layers and if they should be displayed
 
@@ -91,17 +93,21 @@ float clamp(float value, float min, float max) {
 	return (value < min) ? min : (value > max) ? max : value;
 }
 
+void populateLayerOptions() {
+
+	for (int i = 0; i < loadedPCB.getNumberOfLayers(); i++) {
+		pcbSettings.LayerControl.push_back({ loadedPCB.getPCBLayerNames()[i], true });
+	}
+
+}
+
+
 //********************************************************//
 //				ImGUI Create Settings Window
 //********************************************************//
 void createSettingsWindow() {
 
-	//Temp
-	pcbSettings.LayerControl = {
-		{"Layer1", true},
-		{"Layer2", true},
-		// Add more layers as needed
-	};
+	populateLayerOptions();
 
 	glutInitWindowSize(1280, 720);
 	glutCreateWindow("Settings Menu");
@@ -177,8 +183,18 @@ void runSettingsWindow()
 		ImGui::Text("Please Select What Type of Simulation you want to run");               // Display some text (you can use a format strings too)
 		ImGui::Checkbox("Enable Virtual Only Simulation?", &virtual_only_simulation); // Edit bools storing our window open/close state
 
+		ImGui::Separator(); // Add A section break
+		ImGui::Spacing();
+
 		if (virtual_only_simulation == false)
 		{
+			ImGui::Text("Probe Connection Setup");
+
+			//Get Parameters From the Probe
+			minVoltage = 0.0;
+			maxVoltage = 5.0;
+			//Also Get the possible waveforms that can be generated
+			//Here
 
 			// Create a button to refresh the list of COM ports
 			if (ImGui::Button("Refresh COM Ports")) {
@@ -203,6 +219,18 @@ void runSettingsWindow()
 		}
 		else
 		{
+			//Set Values reasonable for computation only
+			minVoltage = -50000;
+			maxVoltage = +50000;
+		}
+
+		ImGui::Separator(); // Add A section break
+		ImGui::Spacing();
+
+		{
+			// Add a title for the second section
+			ImGui::Text("Simulation Parameters");
+
 			// Input box for Voltage
 			ImGui::InputFloat("Voltage", &voltage);
 			// Display text indicating the min and max values for Voltage
@@ -223,20 +251,20 @@ void runSettingsWindow()
 
 
 			// Input box for Simulation Time
-			ImGui::InputFloat("Simulation Time", &simulationTime);
+			ImGui::InputDouble("Simulation Time", &simulationTime);
 
 			// Input box for Time Step
-			ImGui::InputFloat("Time Step", &timeStep, 0.001f, 1.0f, "%.3f");  // Adjust the increment and precision as needed
+			ImGui::InputDouble("Time Step", &timeStep, 0.001f, 1.0f, "%.3f");  // Adjust the increment and precision as needed
 
 			// Input box for Start Time
-			ImGui::InputFloat("Start Time", &startTime);
+			ImGui::InputDouble("Start Time", &startTime);
 
 			// Input box for End Time
-			ImGui::InputFloat("End Time", &endTime);
+			ImGui::InputDouble("End Time", &endTime);
 
 			// Ensure sensible values for the parameters
 			simulationTime = std::max(startTime, std::min(simulationTime, endTime));
-			timeStep = std::max(0.001f, timeStep);  // Minimum time step value
+			timeStep = std::max(0.001, timeStep);  // Minimum time step value
 			endTime = std::max(startTime, endTime);  // Ensure End Time is not less than Start Time
 		}
 

@@ -41,6 +41,8 @@ float clamp(float value, float min, float max);
 //Function to Create the settings Window
 void createSettingsWindow();
 
+void populateLayerOptions();
+
 //Function to run the settings window
 void runSettingsWindow();
 
