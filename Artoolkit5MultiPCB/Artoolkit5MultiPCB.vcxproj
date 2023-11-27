@@ -140,11 +140,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ComPortSource.cpp" />
+    <ClCompile Include="Gui.cpp" />
     <ClCompile Include="IMGUI\imgui.cpp" />
     <ClCompile Include="IMGUI\imgui_demo.cpp" />
     <ClCompile Include="IMGUI\imgui_draw.cpp" />
     <ClCompile Include="IMGUI\imgui_impl_glut.cpp" />
     <ClCompile Include="IMGUI\imgui_impl_opengl2.cpp" />
+    <ClCompile Include="IMGUI\imgui_stdlib.cpp" />
     <ClCompile Include="IMGUI\imgui_tables.cpp" />
     <ClCompile Include="IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="Layer.cpp" />
@@ -156,6 +159,8 @@
     <ClCompile Include="XYCoord.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\ComPortHandler.h" />
+    <ClInclude Include="Headers\GUI.h" />
     <ClInclude Include="Headers\Layer.h" />
     <ClInclude Include="Headers\PCB.h" />
     <ClInclude Include="Headers\LayerPolygons.h" />
@@ -167,6 +172,7 @@
     <ClInclude Include="IMGUI\imgui_impl_glut.h" />
     <ClInclude Include="IMGUI\imgui_impl_opengl2.h" />
     <ClInclude Include="IMGUI\imgui_internal.h" />
+    <ClInclude Include="IMGUI\imgui_stdlib.h" />
     <ClInclude Include="IMGUI\imstb_rectpack.h" />
     <ClInclude Include="IMGUI\imstb_textedit.h" />
     <ClInclude Include="IMGUI\imstb_truetype.h" />

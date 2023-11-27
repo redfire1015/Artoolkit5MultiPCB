@@ -1,50 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
-
+#define NOMINMAX
 /*
  *  multiTest.c
  *
- *  gsub-based example code to demonstrate use of ARToolKit
- *  with multi-marker tracking.
- *
  *  Press '?' while running for help on available key commands.
- *
- *  Disclaimer: IMPORTANT:  This Daqri software is supplied to you by Daqri
- *  LLC ("Daqri") in consideration of your agreement to the following
- *  terms, and your use, installation, modification or redistribution of
- *  this Daqri software constitutes acceptance of these terms.  If you do
- *  not agree with these terms, please do not use, install, modify or
- *  redistribute this Daqri software.
- *
- *  In consideration of your agreement to abide by the following terms, and
- *  subject to these terms, Daqri grants you a personal, non-exclusive
- *  license, under Daqri's copyrights in this original Daqri software (the
- *  "Daqri Software"), to use, reproduce, modify and redistribute the Daqri
- *  Software, with or without modifications, in source and/or binary forms;
- *  provided that if you redistribute the Daqri Software in its entirety and
- *  without modifications, you must retain this notice and the following
- *  text and disclaimers in all such redistributions of the Daqri Software.
- *  Neither the name, trademarks, service marks or logos of Daqri LLC may
- *  be used to endorse or promote products derived from the Daqri Software
- *  without specific prior written permission from Daqri.  Except as
- *  expressly stated in this notice, no other rights or licenses, express or
- *  implied, are granted by Daqri herein, including but not limited to any
- *  patent rights that may be infringed by your derivative works or by other
- *  works in which the Daqri Software may be incorporated.
- *
- *  The Daqri Software is provided by Daqri on an "AS IS" basis.  DAQRI
- *  MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
- *  THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
- *  FOR A PARTICULAR PURPOSE, REGARDING THE DAQRI SOFTWARE OR ITS USE AND
- *  OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
- *
- *  IN NO EVENT SHALL DAQRI BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
- *  OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- *  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- *  INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
- *  MODIFICATION AND/OR DISTRIBUTION OF THE DAQRI SOFTWARE, HOWEVER CAUSED
- *  AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
- *  STRICT LIABILITY OR OTHERWISE, EVEN IF DAQRI HAS BEEN ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE.
  *
  *  Copyright 2015 Daqri LLC. All Rights Reserved.
  *  Copyright 2002-2015 ARToolworks, Inc. All Rights Reserved.
@@ -53,9 +12,13 @@
  *
  */
 
+ //Standard Library Includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
+//End Standard Library Includes
+
 #ifndef __APPLE__
 #  ifdef _WIN32
 #    include <windows.h>
@@ -64,22 +27,24 @@
 #else
 #  include <GLUT/glut.h>
 #endif
+
+//Ar Toolkit includes
 #include <AR/ar.h>
 #include <AR/gsub.h>
 #include <AR/video.h>
 #include <AR/arMulti.h>
+//End ArToolkit Includes
 
+//ArToolkit Parameter Defines
  //#define                 CPARA_NAME       "Data/camera_para.dat"
  //#define                 CPARA_NAME       "Data/jamesCamCalib.dat"
 #define                 CPARA_NAME       "Data/paulCamCalib.dat"
-
 #define                 CONFIG_NAME      "Data/marker.dat"
+//End ARToolkit Parameter Defines
 
- //My Includes
+//My Includes
 #include "Headers/PCBHandler.h"
-#include "IMGUI/imgui.h"
-#include "IMGUI/imgui_impl_glut.h"
-#include "IMGUI/imgui_impl_opengl2.h"
+#include "Headers/GUI.h"
 //End My Includes
 
 //My Global Variables
@@ -87,15 +52,9 @@ XYCoord originMarkerPos;
 PCB loadedPCB;
 int             xsize, ysize; //moved from init statement
 
-//IMGUI Variables
-// 
-// Our state
-static bool show_demo_window = true;
-static bool show_another_window = false;
-static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
 //End My Global Variables
 
+//Ar Toolkit Global Variables
 ARHandle* arHandle;
 AR3DHandle* ar3DHandle;
 ARGViewportHandle* vp;
@@ -103,179 +62,33 @@ ARMultiMarkerInfoT* config;
 int                     robustFlag = 0;
 int                     count;
 ARParamLT* gCparamLT = NULL;
+//End Artoolkit Global Variables
 
+//ArToolkitFunction Defs
 static void             init(int argc, char* argv[]);
 static void             cleanup(void);
 static void             mainLoop(void);
-static void             draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode);
 static void             keyEvent(unsigned char key, int x, int y);
+//End ArToolkitFunction Defs
+
 
 //MY FUNCTIONS
 void drawPCB(ARdouble trans1[3][4]);
-void runSecondWindow()
-{
-
-	// Start the Dear ImGui frame
-	ImGui_ImplOpenGL2_NewFrame();
-	ImGui_ImplGLUT_NewFrame();
-	ImGui::NewFrame();
-	ImGuiIO& io = ImGui::GetIO();
-
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
-
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		ImGui::End();
-	}
-
-	// 3. Show another simple window.
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
-	}
-
-	// Rendering
-	ImGui::Render();
-	glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
-	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
-	//glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound, but prefer using the GL3+ code.
-	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
-
-	glutSwapBuffers();
-	glutPostRedisplay();
-}
-
-void createSecondWindow() {
-	glutInitWindowSize(1280, 720);
-	glutCreateWindow("Setting Menu");
-
-	// Setup GLUT display function
-	// We will also call ImGui_ImplGLUT_InstallFuncs() to get all the other functions installed for us,
-	// otherwise it is possible to install our own functions and call the imgui_impl_glut.h functions ourselves.
-	glutDisplayFunc(runSecondWindow);
-
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
-
-	// Setup Platform/Renderer backends
-	// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
-	ImGui_ImplGLUT_Init();
-	ImGui_ImplOpenGL2_Init();
-
-	// Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
-	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-	// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-	ImGui_ImplGLUT_InstallFuncs();
-
-
-	// Load Fonts
-	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
-	// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-	// - If the file cannot be loaded, the function will return a nullptr. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-	// - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
-	// - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
-	// - Read 'docs/FONTS.md' for more instructions and details.
-	// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-	//io.Fonts->AddFontDefault();
-	//io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
-	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-	//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
-	//IM_ASSERT(font != nullptr);
-
-	// Main loop
-	glutMainLoop();
-
-	// Cleanup
-	ImGui_ImplOpenGL2_Shutdown();
-	ImGui_ImplGLUT_Shutdown();
-	ImGui::DestroyContext();
-}
-
-void menu(int id)
-{
-	switch (id)
-	{
-	case 1: {
-		// Code for Option 1
-		OPENFILENAME ofn;
-		TCHAR szFileName[MAX_PATH] = { 0 };
-
-		// Initialize OPENFILENAME
-		ZeroMemory(&ofn, sizeof(ofn));
-		ofn.lStructSize = sizeof(ofn);
-		ofn.hwndOwner = NULL;
-		ofn.lpstrFile = szFileName;
-		ofn.nMaxFile = sizeof(szFileName);
-		ofn.lpstrFilter = L"All Files (*.*)\0*.*\0";
-		ofn.nFilterIndex = 1;
-		ofn.lpstrFileTitle = NULL;
-		ofn.nMaxFileTitle = 0;
-		ofn.lpstrInitialDir = NULL;
-		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-		if (GetOpenFileName(&ofn) == TRUE)
-		{
-			// The user selected a file, and the file path is in szFileName
-			// You can use szFileName for further processing
-			MessageBox(NULL, szFileName, L"File Selected", MB_OK);
-		}
-
-		break;
-	}
-
-	case 2: {
-		createSecondWindow();
-		break;
-	}
-	}
-}
 //END MY FUNCTIONS
+
 
 int main(int argc, char* argv[])
 {
+
 	glutInit(&argc, argv);
 	init(argc, argv);
 
+	//Assign Glut Menu
 	glutCreateMenu(menu);
 	glutAddMenuEntry("Select a PCB file to Load", 1);	//Option 1
-	glutAddMenuEntry("Select PCB Layers to Display", 2);//Option 2
+	glutAddMenuEntry("Configure Settings", 2);//Option 2
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
+	//End Glut Menu
 
 	argSetDispFunc(mainLoop, 1);
 	argSetKeyFunc(keyEvent);
@@ -547,71 +360,6 @@ static void cleanup(void)
 	argCleanup();
 }
 
-static void draw(ARdouble trans1[3][4], ARdouble trans2[3][4], int mode)
-{
-	ARdouble  gl_para[16];
-	GLfloat   light_position[] = { 100.0f, -200.0f, 200.0f, 0.0f };
-	GLfloat   light_ambi[] = { 0.1f, 0.1f, 0.1f, 0.0f };
-	GLfloat   light_color[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-	GLfloat   mat_flash[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-	GLfloat   mat_flash_shiny[] = { 50.0f };
-	GLfloat   mat_diffuse[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	GLfloat   mat_diffuse1[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	int       debugMode;
-
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	/* load the camera transformation matrix */
-	glMatrixMode(GL_MODELVIEW);
-	argConvGlpara(trans1, gl_para);
-#ifdef ARDOUBLE_IS_FLOAT
-	glLoadMatrixf(gl_para);
-#else
-	glLoadMatrixd(gl_para);
-#endif
-	argConvGlpara(trans2, gl_para);
-#ifdef ARDOUBLE_IS_FLOAT
-	glMultMatrixf(gl_para);
-#else
-	glMultMatrixd(gl_para); //Try commenting this out This is translation to marker location. Only want to draw from coordinate origin.
-#endif
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambi);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_flash);
-	glMaterialfv(GL_FRONT, GL_SHININESS, mat_flash_shiny);
-	if (mode == 0) {
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, mat_diffuse);
-	}
-	else {
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse1);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, mat_diffuse1);
-	}
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, 20.0f);
-	arGetDebugMode(arHandle, &debugMode);
-
-
-
-	if (debugMode == 0) glutSolidCube(40.0);
-	else                glutWireCube(40.0);
-
-
-	glPopMatrix();
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
-}
-
 void drawPCB(ARdouble trans1[3][4]) {
 
 	ARdouble  gl_para[16];
@@ -647,12 +395,13 @@ void drawPCB(ARdouble trans1[3][4]) {
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
 			//currentSegment.getSegmentThickness()
 			if (currentLayer.getLayerName() == "F.Cu") {
-				glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
-				glBegin(GL_LINES);
-				glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
-				glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
-				glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
-				glEnd();
+				//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
+				//glBegin(GL_LINES);
+				//glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
+				//glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
+				//glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
+				//glEnd();
+				glRectf(-currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2, currentSegment.getEndCoord().getYCoord() * -2);
 			}
 
 		}

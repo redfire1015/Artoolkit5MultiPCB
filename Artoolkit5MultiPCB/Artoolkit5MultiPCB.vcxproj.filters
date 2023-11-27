@@ -13,17 +13,29 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\PCBHeaders">
-      <UniqueIdentifier>{22b2b405-27a9-454f-85bf-ffb55424c023}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\IMGUIHeaders">
       <UniqueIdentifier>{069cb070-085f-4379-9931-5a8caf3f9903}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\PCBSource">
-      <UniqueIdentifier>{46a1d373-d1fb-4a94-bf89-a708aabcb9eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\IMGUISource">
       <UniqueIdentifier>{3072ccc1-c81b-4fa9-9671-bd4d294a83ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{0f2f3e63-f12a-404c-b2fc-19b3d8e145d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PCBClassHeaders">
+      <UniqueIdentifier>{22b2b405-27a9-454f-85bf-ffb55424c023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PCBClassSource">
+      <UniqueIdentifier>{46a1d373-d1fb-4a94-bf89-a708aabcb9eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUISource">
+      <UniqueIdentifier>{04ae4112-ff72-401c-b443-05bc8b64bd3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ComPortHeaders">
+      <UniqueIdentifier>{7b750514-39e3-4571-9ee4-88934da5f209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ComPortSource">
+      <UniqueIdentifier>{f6f1e2fa-08a7-461e-aad8-5634122eec10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,22 +43,22 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Layer.cpp">
-      <Filter>Source Files\PCBSource</Filter>
+      <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
     <ClCompile Include="LayerPolygons.cpp">
-      <Filter>Source Files\PCBSource</Filter>
+      <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
     <ClCompile Include="PCB.cpp">
-      <Filter>Source Files\PCBSource</Filter>
+      <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
     <ClCompile Include="PCBHandler.cpp">
-      <Filter>Source Files\PCBSource</Filter>
+      <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
     <ClCompile Include="Segment.cpp">
-      <Filter>Source Files\PCBSource</Filter>
+      <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
     <ClCompile Include="XYCoord.cpp">
-      <Filter>Source Files\PCBSource</Filter>
+      <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
     <ClCompile Include="IMGUI\imgui.cpp">
       <Filter>Source Files\IMGUISource</Filter>
@@ -69,25 +81,34 @@
     <ClCompile Include="IMGUI\imgui_widgets.cpp">
       <Filter>Source Files\IMGUISource</Filter>
     </ClCompile>
+    <ClCompile Include="IMGUI\imgui_stdlib.cpp">
+      <Filter>Source Files\IMGUISource</Filter>
+    </ClCompile>
+    <ClCompile Include="Gui.cpp">
+      <Filter>Source Files\GUISource</Filter>
+    </ClCompile>
+    <ClCompile Include="ComPortSource.cpp">
+      <Filter>Source Files\ComPortSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Layer.h">
-      <Filter>Header Files\PCBHeaders</Filter>
+      <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Headers\LayerPolygons.h">
-      <Filter>Header Files\PCBHeaders</Filter>
+      <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Headers\PCB.h">
-      <Filter>Header Files\PCBHeaders</Filter>
+      <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Headers\PCBHandler.h">
-      <Filter>Header Files\PCBHeaders</Filter>
+      <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Segment.h">
-      <Filter>Header Files\PCBHeaders</Filter>
+      <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Headers\XYCoord.h">
-      <Filter>Header Files\PCBHeaders</Filter>
+      <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
     <ClInclude Include="IMGUI\imconfig.h">
       <Filter>Header Files\IMGUIHeaders</Filter>
@@ -112,6 +133,15 @@
     </ClInclude>
     <ClInclude Include="IMGUI\imstb_truetype.h">
       <Filter>Header Files\IMGUIHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_stdlib.h">
+      <Filter>Header Files\IMGUIHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\GUI.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ComPortHandler.h">
+      <Filter>Header Files\ComPortHeaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
