@@ -83,6 +83,9 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	init(argc, argv);
 
+	argSetDispFunc(mainLoop, 1);
+	argSetKeyFunc(keyEvent);
+
 	//Assign Glut Menu
 	glutCreateMenu(menu);
 	glutAddMenuEntry("Select a PCB file to Load", 1);	//Option 1
@@ -90,8 +93,9 @@ int main(int argc, char* argv[])
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//End Glut Menu
 
-	argSetDispFunc(mainLoop, 1);
-	argSetKeyFunc(keyEvent);
+	glutIdleFunc(mainLoop); // Assuming display is your display function
+
+
 	count = 0;
 	arVideoCapStart();
 	arUtilTimerReset();
@@ -395,13 +399,13 @@ void drawPCB(ARdouble trans1[3][4]) {
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
 			//currentSegment.getSegmentThickness()
 			if (currentLayer.getLayerName() == "F.Cu") {
-				//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
-				//glBegin(GL_LINES);
-				//glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
-				//glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
-				//glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
-				//glEnd();
-				glRectf(-currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2, currentSegment.getEndCoord().getYCoord() * -2);
+				glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
+				glBegin(GL_LINES);
+				glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
+				glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
+				glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
+				glEnd();
+				//glRectf(-currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2, currentSegment.getEndCoord().getYCoord() * -2);
 			}
 
 		}
