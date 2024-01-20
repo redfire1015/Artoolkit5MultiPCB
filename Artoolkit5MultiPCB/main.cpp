@@ -19,6 +19,7 @@
 #include <vector>
 //End Standard Library Includes
 
+//Graphics and Platform Specific Includes
 #ifndef __APPLE__
 #  ifdef _WIN32
 #    include <windows.h>
@@ -27,6 +28,8 @@
 #else
 #  include <GLUT/glut.h>
 #endif
+
+//End Platform Specific includes
 
 //Ar Toolkit includes
 #include <AR/ar.h>
@@ -93,8 +96,7 @@ int main(int argc, char* argv[])
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//End Glut Menu
 
-	glutIdleFunc(mainLoop); // Assuming display is your display function
-
+	glutIdleFunc(mainLoop); // Needed when using free glut not sure why
 
 	count = 0;
 	arVideoCapStart();
@@ -220,10 +222,11 @@ static void mainLoop(void)
 
 	//for (i = 0; i < config->marker_num; i++) { //Only want to do this once for one marker
 	//	if (config->marker[i].visible >= 0) draw(config->trans, config->marker[i].trans, 0); //Dont really need second transform matrix
-	//	else                                 draw(config->trans, config->marker[i].trans, 1);
+	//	else                                 draw(config->trans, config->marker[i].trans, 1); //First transform is for overall, second is for indicidual.
 	//}
 
 	drawPCB(config->trans);
+
 
 	argSwapBuffers();
 }
@@ -399,13 +402,63 @@ void drawPCB(ARdouble trans1[3][4]) {
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
 			//currentSegment.getSegmentThickness()
 			if (currentLayer.getLayerName() == "F.Cu") {
-				glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
-				glBegin(GL_LINES);
-				glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
-				glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
-				glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
-				glEnd();
+				//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
+				//glBegin(GL_LINES);
+				//glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
+				//glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
+				//glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
+				//glEnd();
 				//glRectf(-currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2, currentSegment.getEndCoord().getYCoord() * -2);
+
+				// Calculate the direction vector
+				glColor3f(1.0, 0.0, 0.0); // Set color to red
+				float x1 = currentSegment.getStartCoord().getXCoord() * 2;
+				float x2 = currentSegment.getEndCoord().getXCoord() * 2;
+				float y1 = currentSegment.getStartCoord().getYCoord() * -2;
+				float y2 = currentSegment.getEndCoord().getYCoord() * -2;
+
+				float dx = x2 - x1;
+				float dy = y2 - y1;
+
+				// Calculate the length of the line
+				float length = sqrt(dx * dx + dy * dy);
+
+				// Normalize the direction vector
+				dx /= length;
+				dy /= length;
+
+				// Calculate perpendicular vector
+				float px = -dy;
+				float py = dx;
+
+				// Calculate half thickness
+				float halfThickness = currentSegment.getSegmentThickness() * 4 / 2.0f;
+
+				// Calculate the four vertices of the rectangle
+				float x1t = x1 + px * halfThickness;
+				float y1t = y1 + py * halfThickness;
+
+				float x2t = x1 - px * halfThickness;
+				float y2t = y1 - py * halfThickness;
+
+				float x3t = x2 + px * halfThickness;
+				float y3t = y2 + py * halfThickness;
+
+				float x4t = x2 - px * halfThickness;
+				float y4t = y2 - py * halfThickness;
+
+				// Draw the rectangle using GL_TRIANGLES
+				glBegin(GL_TRIANGLES);
+				glVertex2f(x1t, y1t);
+				glVertex2f(x2t, y2t);
+				glVertex2f(x3t, y3t);
+
+				glVertex2f(x2t, y2t);
+				glVertex2f(x3t, y3t);
+				glVertex2f(x4t, y4t);
+				glEnd();
+
+
 			}
 
 		}
