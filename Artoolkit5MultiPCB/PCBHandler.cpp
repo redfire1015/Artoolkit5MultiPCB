@@ -1,6 +1,6 @@
 #include "Headers/PCBhandler.h"
 
-void LoadPCB(PCB& input) { //Needs to Be adjusted for locaztion of markers
+void LoadPCB(PCB& input, const char* pcbFilePath) { //Needs to Be adjusted for locaztion of markers
 
 	//Populating Segments 
 	float segWidth = 0.25; //All segments have the same width for testing

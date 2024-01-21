@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\IMGUIHeaders">
-      <UniqueIdentifier>{069cb070-085f-4379-9931-5a8caf3f9903}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\IMGUISource">
-      <UniqueIdentifier>{3072ccc1-c81b-4fa9-9671-bd4d294a83ca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\GUI">
       <UniqueIdentifier>{0f2f3e63-f12a-404c-b2fc-19b3d8e145d4}</UniqueIdentifier>
     </Filter>
@@ -60,30 +54,6 @@
     <ClCompile Include="XYCoord.cpp">
       <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
-    <ClCompile Include="IMGUI\imgui.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_demo.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_draw.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_impl_glut.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_impl_opengl2.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_tables.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_widgets.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_stdlib.cpp">
-      <Filter>Source Files\IMGUISource</Filter>
-    </ClCompile>
     <ClCompile Include="Gui.cpp">
       <Filter>Source Files\GUISource</Filter>
     </ClCompile>
@@ -109,33 +79,6 @@
     </ClInclude>
     <ClInclude Include="Headers\XYCoord.h">
       <Filter>Header Files\PCBClassHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imconfig.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imgui.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imgui_impl_glut.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imgui_impl_opengl2.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imgui_internal.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imstb_rectpack.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imstb_textedit.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imstb_truetype.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imgui_stdlib.h">
-      <Filter>Header Files\IMGUIHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Headers\GUI.h">
       <Filter>Header Files\GUI</Filter>

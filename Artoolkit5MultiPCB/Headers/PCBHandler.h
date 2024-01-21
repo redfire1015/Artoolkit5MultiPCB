@@ -6,7 +6,7 @@
 #include <iomanip>  // Include for std::setprecision
 #include <iostream>
 
-void LoadPCB(PCB& input);
+void LoadPCB(PCB& input, const char* pcbFilePath);
 
 double calculateDistance(const XYCoord& point1, const XYCoord& point2);
 

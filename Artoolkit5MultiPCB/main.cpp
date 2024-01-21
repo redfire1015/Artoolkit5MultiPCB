@@ -52,8 +52,8 @@
 
 //My Global Variables
 XYCoord originMarkerPos;
-PCB loadedPCB;
-int             xsize, ysize; //moved from init statement
+PCB		loadedPCB;
+int     xsize, ysize; //moved from init statement
 
 //End My Global Variables
 
@@ -91,12 +91,13 @@ int main(int argc, char* argv[])
 
 	//Assign Glut Menu
 	glutCreateMenu(menu);
-	glutAddMenuEntry("Select a PCB file to Load", 1);	//Option 1
-	glutAddMenuEntry("Configure Settings", 2);//Option 2
+	glutAddMenuEntry("Select Settings config to load", 1);	//Option 1
+	glutAddMenuEntry("Begin virtual simulation only", 2);//Option 2
+	glutAddMenuEntry("Begin virtual simulation and ESP32 simulation", 3);//Option 2
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//End Glut Menu
 
-	glutIdleFunc(mainLoop); // Needed when using free glut not sure why
+	//glutIdleFunc(mainLoop); // Needed when using free glut not sure why
 
 	count = 0;
 	arVideoCapStart();
@@ -226,8 +227,6 @@ static void mainLoop(void)
 	//}
 
 	drawPCB(config->trans);
-
-
 	argSwapBuffers();
 }
 
@@ -279,7 +278,7 @@ static void   init(int argc, char* argv[])
 		//int scalingFactor = 2; //May be used
 		originMarkerPos = LoadMarkerConfiguation(markerConfigFilePath);
 
-		LoadPCB(loadedPCB); //Populates loadedPCB with PCB data
+		LoadPCB(loadedPCB, "Data"); //Populates loadedPCB with PCB data
 
 		configName[0] = '\0';
 		vconf[0] = '\0';
