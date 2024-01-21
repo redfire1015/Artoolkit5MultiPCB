@@ -2,7 +2,7 @@
 #define layer_def
 
 #include "LayerPolygons.h"
-#include "Segment.h"
+#include "LayerSegment.h"
 #include <string>
 
 class Layer

@@ -149,7 +149,7 @@
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="LayerPolygons.cpp" />
     <ClCompile Include="PCBHandler.cpp" />
-    <ClCompile Include="Segment.cpp" />
+    <ClCompile Include="LayerSegment.cpp" />
     <ClCompile Include="XYCoord.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +159,7 @@
     <ClInclude Include="Headers\PCB.h" />
     <ClInclude Include="Headers\LayerPolygons.h" />
     <ClInclude Include="Headers\PCBHandler.h" />
-    <ClInclude Include="Headers\Segment.h" />
+    <ClInclude Include="Headers\LayerSegment.h" />
     <ClInclude Include="Headers\XYCoord.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

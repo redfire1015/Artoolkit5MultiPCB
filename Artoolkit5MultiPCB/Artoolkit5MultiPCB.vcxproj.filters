@@ -31,6 +31,18 @@
     <Filter Include="Source Files\ComPortSource">
       <UniqueIdentifier>{f6f1e2fa-08a7-461e-aad8-5634122eec10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MatrixSolverSource">
+      <UniqueIdentifier>{1576146c-b3fe-4eda-8193-7d68cd6d2d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MatrixSolver">
+      <UniqueIdentifier>{e3410ed5-1e19-4683-a9e5-f5469b8f89da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SimulationHandler">
+      <UniqueIdentifier>{902c568e-e9e9-478a-a0c0-9f7fd8f6a8cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SimulationHandlerSource">
+      <UniqueIdentifier>{700bfdb3-823d-4b17-8677-f02445255917}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,7 +60,7 @@
     <ClCompile Include="PCBHandler.cpp">
       <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
-    <ClCompile Include="Segment.cpp">
+    <ClCompile Include="LayerSegment.cpp">
       <Filter>Source Files\PCBClassSource</Filter>
     </ClCompile>
     <ClCompile Include="XYCoord.cpp">
@@ -74,7 +86,7 @@
     <ClInclude Include="Headers\PCBHandler.h">
       <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Segment.h">
+    <ClInclude Include="Headers\LayerSegment.h">
       <Filter>Header Files\PCBClassHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Headers\XYCoord.h">

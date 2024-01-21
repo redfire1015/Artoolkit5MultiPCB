@@ -1,4 +1,4 @@
-#include "Headers/Segment.h"
+#include "Headers/LayerSegment.h"
 
 // Default constructor
 Segment::Segment() : SegmentThickness(0.0), startCoord(), endCoord()
