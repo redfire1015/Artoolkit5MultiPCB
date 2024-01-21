@@ -9,7 +9,7 @@ Layer::Layer() : layerName(""), numberOfLayerSegments(0), numberOfLayerPolygons(
 // Constructor with parameters
 Layer::Layer(const std::string& name, int segmentCount, int polygonCount)
 	: layerName(name), numberOfLayerSegments(segmentCount), numberOfLayerPolygons(polygonCount),
-	layerSegments(new Segment[segmentCount]), layerPolygons(new layerPolygon[polygonCount])
+	layerSegments(new layerSegment[segmentCount]), layerPolygons(new layerPolygon[polygonCount])
 {
 }
 
@@ -18,7 +18,7 @@ Layer::Layer(const Layer& other)
 	: layerName(other.layerName), numberOfLayerSegments(other.numberOfLayerSegments), numberOfLayerPolygons(other.numberOfLayerPolygons)
 {
 	// Copy segments
-	layerSegments = new Segment[numberOfLayerSegments];
+	layerSegments = new layerSegment[numberOfLayerSegments];
 	for (int i = 0; i < numberOfLayerSegments; ++i)
 	{
 		layerSegments[i] = other.layerSegments[i];
@@ -47,7 +47,7 @@ Layer& Layer::operator=(const Layer& other)
 		numberOfLayerPolygons = other.numberOfLayerPolygons;
 
 		// Allocate and copy segments
-		layerSegments = new Segment[numberOfLayerSegments];
+		layerSegments = new layerSegment[numberOfLayerSegments];
 		for (int i = 0; i < numberOfLayerSegments; ++i)
 		{
 			layerSegments[i] = other.layerSegments[i];
@@ -80,7 +80,7 @@ int Layer::getNumberOfLayerSegments() const
 void Layer::setNumberOfLayerSegments(int count)
 {
 	// Allocate a new array with the specified size
-	Segment* newSegments = new Segment[count];
+	layerSegment* newSegments = new layerSegment[count];
 
 	// Copy existing segments to the new array (up to the minimum of old and new count)
 	for (int i = 0; i < std::min(count, numberOfLayerSegments); ++i)
@@ -133,18 +133,18 @@ void Layer::setLayerName(const std::string& name)
 }
 
 // Getter and setter for layerSegments
-const Segment* Layer::getLayerSegments() const
+const layerSegment* Layer::getLayerSegments() const
 {
 	return layerSegments;
 }
 
-void Layer::setLayerSegments(const Segment* segments, int count)
+void Layer::setLayerSegments(const layerSegment* segments, int count)
 {
 	// Deallocate existing array
 	delete[] layerSegments;
 
 	// Copy data from the provided array
-	layerSegments = new Segment[count];
+	layerSegments = new layerSegment[count];
 	for (int i = 0; i < count; ++i)
 	{
 		layerSegments[i] = segments[i];

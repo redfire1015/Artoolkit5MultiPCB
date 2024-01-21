@@ -4,20 +4,20 @@
 #include "XYCoord.h"
 #include <string>
 
-class Segment
+class layerSegment
 {
 public:
 	// Default constructor
-	Segment();
+	layerSegment();
 
 	// Parameterized constructor
-	Segment(const XYCoord& startCoord_input, const XYCoord& endCoord_input, float thickness_input, const std::string& layer_input);
+	layerSegment(const XYCoord& startCoord_input, const XYCoord& endCoord_input, float thickness_input, const std::string& layer_input);
 
 	// Copy constructor
-	Segment(const Segment& other);
+	layerSegment(const layerSegment& other);
 
 	// Copy assignment operator
-	Segment& operator=(const Segment& other);
+	layerSegment& operator=(const layerSegment& other);
 
 	// Getters for thickness and layer name
 	float getSegmentThickness() const;
@@ -33,14 +33,13 @@ public:
 
 	void SetEndCoord(XYCoord End_in);
 
-
 	// Destructor
-	~Segment();
+	~layerSegment();
 
 private:
 	XYCoord startCoord;     // Start XY
 	XYCoord endCoord;       // End XY
-	float SegmentThickness; // Thickness of a trace (aka Segment)
+	float SegmentThickness; // Thickness of a trace (aka layerSegment)
 };
 
 #endif

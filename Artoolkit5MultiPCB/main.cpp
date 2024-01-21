@@ -398,7 +398,7 @@ void drawPCB(ARdouble trans1[3][4]) {
 		// Print information about segments
 		for (int j = 0; j < currentLayer.getNumberOfLayerSegments(); ++j)
 		{
-			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
+			const layerSegment& currentSegment = currentLayer.getLayerSegments()[j];
 			//currentSegment.getSegmentThickness()
 			if (currentLayer.getLayerName() == "F.Cu") {
 				//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
