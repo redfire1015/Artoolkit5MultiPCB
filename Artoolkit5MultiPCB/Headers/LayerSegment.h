@@ -33,6 +33,11 @@ public:
 
 	void SetEndCoord(XYCoord End_in);
 
+	// Getter and setter for layerName
+	const std::string& getLayer() const;
+
+	void setLayer(const std::string& name);
+
 
 	// Destructor
 	~Segment();
@@ -41,6 +46,7 @@ private:
 	XYCoord startCoord;     // Start XY
 	XYCoord endCoord;       // End XY
 	float SegmentThickness; // Thickness of a trace (aka Segment)
+	std::string layer; //layer the segment is on
 };
 
 #endif

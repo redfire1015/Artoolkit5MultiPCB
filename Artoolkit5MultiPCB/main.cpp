@@ -52,7 +52,6 @@
 
 //My Global Variables
 XYCoord originMarkerPos;
-PCB	loadedPCB; //Externed inside PCBHandler
 int     xsize, ysize; //moved from init statement
 
 //End My Global Variables
@@ -275,13 +274,18 @@ static void   init(int argc, char* argv[])
 			printf("Memory allocation failed.\n");
 		}
 
+		//Get Settings File data
+		//TODO: 
+		//Exit program if file empty
+
 		//Initialising the Marker File 
+		//originMarkerPos = LoadMarkerConfiguation(markerConfigFilePath);
 		//Initialising the PCB
+		//LoadPCB(loadedPCB, "Data"); //Populates loadedPCB with PCB data
 
-		//int scalingFactor = 2; //May be used
-		originMarkerPos = LoadMarkerConfiguation(markerConfigFilePath);
+		//loadKicadPCBFile(markerConfigFilePath, "C:\\Users\\jrhol\\OneDrive\\Documents\\University_Of_Nottingham\\EEE\\Year_4\\EEEE4008_Individual_Project\\PCB's\\AR Basic Example\\BasicRCForGerberFile.kicad_pcb");
+		loadKicadPCBFile(markerConfigFilePath, "C:\\Users\\jrhol\\OneDrive\\Documents\\University_Of_Nottingham\\EEE\\Year_4\\EEEE4008_Individual_Project\\PCB's\\Interactive Example\\Proposal Example PCB\\Proposal Example PCB.kicad_pcb");
 
-		LoadPCB(loadedPCB, "Data"); //Populates loadedPCB with PCB data
 
 
 		configName[0] = '\0';
@@ -404,7 +408,7 @@ void drawPCB(ARdouble trans1[3][4]) {
 		{
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
 			//currentSegment.getSegmentThickness()
-			if (currentLayer.getLayerName() == "F.Cu") {
+			if (currentLayer.getLayerName() == "B.Cu") {
 				//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
 				//glBegin(GL_LINES);
 				//glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed

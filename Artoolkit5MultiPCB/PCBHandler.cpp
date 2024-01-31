@@ -100,83 +100,251 @@ void LoadPCB(PCB& input, const char* pcbFilePath) { //Needs to Be adjusted for l
 	delete[] layerNames;
 }
 
-// Function to calculate Euclidean distance between two points
-double calculateDistance(const XYCoord& point1, const XYCoord& point2) {
-	return std::sqrt(std::pow(point2.getXCoord() - point1.getXCoord(), 2) + std::pow(point2.getYCoord() - point1.getYCoord(), 2));
-}
 
-XYCoord LoadMarkerConfiguation(char* markerFilePath) {
 
-	int scalingFactor = 2;
 
-	//Marker Size 40 - Assume all the same size for now (can later be modified so size is calculated from PCB file)
-	float markerSize = 40.0;
-	//Load marker locations on PCB
 
-	//Marker 0
-	//X 77.47, Y 48.26
-	XYCoord marker0Centre(77.47, 48.26);
 
-	//Marker 1
-	//X 168.91 Y 48.26
-	XYCoord marker1Centre(168.91, 48.26);
+PCB	loadedPCB;				//Externed inside PCBHandler
 
-	//Marker 2
-	//X 77.47, Y 119.38
-	XYCoord marker2Centre(77.47, 119.38);
+void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
+{
+	//Getting the Name of the PCB to name the PCB class
+	// Find the last occurrence of '\\'
+	const char* lastSlash = std::strrchr(pcbFilePath, '\\');
 
-	//Marker 3
-	//X 168.91 Y 119.38
-	XYCoord marker3Centre(168.91, 119.38);
+	if (lastSlash != nullptr) {
+		// Extract the substring from lastSlash+1 to the end
+		const char* extractedText = lastSlash + 1;
+		loadedPCB.setPCBName(extractedText);
 
-	XYCoord markers[] = { marker0Centre, marker1Centre,marker2Centre,marker3Centre };
-	int numberOfPCBMarker = sizeof(markers) / sizeof(markers[0]);
-
-	//Calculate marker closest to top left - This will be the reference point
-	XYCoord origin(0, 0);
-
-	// Initialize variables for closest marker and distance
-	int closestMarker = 0;
-	double minDistance = calculateDistance(marker0Centre, origin); //Start with a basic value to compare to
-
-	// Loop through all markers
-	for (int i = 0; i < numberOfPCBMarker; ++i) {
-		double distance = calculateDistance(marker0Centre, markers[i]);
-
-		// Check if the current marker is closer
-		if (distance < minDistance) {
-			closestMarker = i;
-			minDistance = distance;
-		}
+		std::cout << "Extracted text: " << extractedText << std::endl;
+	}
+	else {
+		std::cerr << "No '\\' found in the file path." << std::endl;
 	}
 
-	//Calculate relative location
-	//KiCad sets the Top left location to be the origin.
-	//Therefore the closest marker to the top left will be the origin for the marker coordinate system
+	//
+	std::string fullFileString;
+	std::ifstream pcbInputFile(pcbFilePath);
 
-	XYCoord originMarker = markers[closestMarker];
+	if (!pcbInputFile.is_open())
+	{
+		std::cerr << "Error opening file" << std::endl;
+		return;
+	}
 
-	printf("X: %f and Y:%f\n", originMarker.getXCoord(), originMarker.getYCoord());
+	std::string line;
+	int numSegs = 0;
 
-	// Calculate relative locations
-	XYCoord* relativeLocations = new XYCoord[numberOfPCBMarker];
+	std::vector<Segment>	SegmentVector;
 
-	for (int i = 0; i < numberOfPCBMarker; i++) {
-		float tempXCoord;
-		float tempYCoord;
+	while (std::getline(pcbInputFile, line)) //Iterate through the whole file
+	{
+		//Note that KICAD separates segments onto individual lines
+		//When we find a line with segment in
+		if (line.find("  (segment ") != std::string::npos)
+		{
+			SegmentVector.push_back(processSegment(line)); //Process this line
+			numSegs++;
+		}
+		fullFileString += line;
+	}
 
-		//XCoord Processing
-		//XCoord system the same as normal
-		//tempXCoord = markers[i].getXCoord() - originMarker.getXCoord(); //X Relative Coords always Current X - Chosen Origin X
-		tempXCoord = markers[i].getXCoord();
+	//Find List of all unique Layers
+	// 
+	//Collect unique layer names using an unordered_set
+	//std::unordered_set<std::string> uniqueStrings;
+	//for (const auto& layerName : SegmentVector) {
+	//	uniqueStrings.insert(layerName.getLayer());
+	//}
 
-		//YCoord Processing 
-		//YCoords flipped positve negative direction so have to process
-		//tempYCoord = originMarker.getYCoord() - markers[i].getYCoord();
-		tempYCoord = -markers[i].getYCoord();
+	////Display the total number of unique strings
+	//std::cout << "Total number of unique strings: " << uniqueStrings.size() << "\n";
 
-		//relativeLocations[i].setXYCoord((markers[i].getXCoord() - originMarker.getXCoord()), (markers[i].getYCoord() - originMarker.getYCoord())); //WRONG!!
-		relativeLocations[i].setXYCoord(tempXCoord, tempYCoord);
+	// Use a set to store unique layer names
+	std::set<std::string> uniqueLayers;
+
+	// Iterate through the segments and add layer names to the set
+	for (const Segment& currentSegment : SegmentVector) {
+		uniqueLayers.insert(currentSegment.getLayer());
+	}
+
+	// Create a vector of Layer objects
+	std::vector<Layer> layers;
+	for (const std::string& layerName : uniqueLayers) {
+		// Count the number of segments for the current layer
+		int numSegments = std::count_if(SegmentVector.begin(), SegmentVector.end(),
+			[&layerName](const Segment& seg) { return seg.getLayer() == layerName; });
+
+		// Extract segments for the current layer
+		std::vector<Segment> layerSegments;
+		std::copy_if(SegmentVector.begin(), SegmentVector.end(), std::back_inserter(layerSegments),
+			[&layerName](const Segment& seg) { return seg.getLayer() == layerName; });
+
+		// Create a Layer object and add it to the vector
+		layers.emplace_back(layerName, numSegments, 0);
+	}
+
+	// Iterate through the layers and associate segments
+	for (Layer& layer : layers) {
+		// Extract segments for the current layer
+		std::vector<Segment> layerSegments;
+		std::copy_if(SegmentVector.begin(), SegmentVector.end(), std::back_inserter(layerSegments),
+			[&layer](const Segment& seg) { return seg.getLayer() == layer.getLayerName(); });
+
+		// Set the layer segments
+		layer.setLayerSegments(layerSegments.data(), layerSegments.size());
+	}
+
+	//Load Segments into PCB Class
+	loadedPCB.setNumberOfLayers(layers.size());
+	loadedPCB.setPCBLayers(layers.data(), loadedPCB.getNumberOfLayers());
+
+	//Process Markers 
+	processMarker(fullFileString, markerFilePath);
+
+
+	//Process Polygons
+	//processPolygons(fullFile);
+
+
+	//Debugging
+	//std::cout << "Total Number of Segments:		" << std::endl;
+	//std::cout << numSegs << std::endl;
+	//std::cout << "Layer List:		" << std::endl;
+	//for (const auto& str : layerList) {
+	//	std::cout << str << " ";
+	//}
+	//std::cout << std::endl;
+	//End Debugging
+
+	pcbInputFile.close();
+	fullFileString.clear();
+}
+
+Segment processSegment(std::string inputString) {
+
+	std::cout << "Found Segment: " << inputString << std::endl;
+
+	// Find and extract start x and y
+	size_t startIndex = inputString.find("start");
+	size_t endIndex = inputString.find(")", startIndex);
+	std::string startSubstring = inputString.substr(startIndex, endIndex - startIndex);
+	std::istringstream startStream(startSubstring);
+	std::string startToken;
+	double startX, startY;
+	startStream >> startToken >> startX >> startY;
+
+	// Find and extract end x and y
+	size_t endIndexIndex = inputString.find("end");
+	endIndex = inputString.find(")", endIndexIndex);
+	std::string endSubstring = inputString.substr(endIndexIndex, endIndex - endIndexIndex);
+	std::istringstream endStream(endSubstring);
+	std::string endToken;
+	double endX, endY;
+	endStream >> endToken >> endX >> endY;
+
+	// Find and extract width
+	size_t widthIndex = inputString.find("width");
+	endIndex = inputString.find(")", widthIndex);
+	std::string widthSubstring = inputString.substr(widthIndex, endIndex - widthIndex);
+	std::istringstream widthStream(widthSubstring);
+	std::string widthToken;
+	double width;
+	widthStream >> widthToken >> width;
+
+	// Find and extract layer name
+	size_t layerIndex = inputString.find("layer");
+	endIndex = inputString.find(")", layerIndex);
+	std::string layerSubstring = inputString.substr(layerIndex, endIndex - layerIndex);
+	size_t quote1 = layerSubstring.find("\"");
+	size_t quote2 = layerSubstring.find("\"", quote1 + 1);
+	std::string layerName = layerSubstring.substr(quote1 + 1, quote2 - quote1 - 1);
+
+	// Find and extract net number
+	size_t netIndex = inputString.find("net");
+	endIndex = inputString.find(")", netIndex);
+	std::string netSubstring = inputString.substr(netIndex, endIndex - netIndex);
+	std::istringstream netStream(netSubstring);
+	std::string netToken;
+	int netNumber;
+	netStream >> netToken >> netNumber;
+
+	//Adding the Layer for this segment to a list 
+	//findAndCreateLayers(layerName);
+
+	// Print the extracted information
+	//std::cout << "		SEGMENT DATA		" << std::endl;
+	//std::cout << "Start X: " << startX << std::endl;
+	//std::cout << "Start Y: " << startY << std::endl;
+	//std::cout << "End X: " << endX << std::endl;
+	//std::cout << "End Y: " << endY << std::endl;
+	//std::cout << "Width: " << width << std::endl;
+	//std::cout << "Layer: " << layerName << std::endl;
+	//std::cout << "Net Number: " << netNumber << std::endl;
+	//std::cout << "		END SEGMENT		" << std::endl;
+
+	// 	Segment(const XYCoord& startCoord_input, const XYCoord& endCoord_input, float thickness_input, const std::string& layer_input);
+	XYCoord startCoord(startX, startY);
+	XYCoord endCoord(endX, endY);
+
+	Segment tempSegment(startCoord, endCoord, width, layerName);
+
+	return tempSegment;
+
+}
+
+
+void findAndCreateLayers(const std::string& inputString) {
+
+}
+
+
+
+void processMarker(std::string fullFileString, char* markerFilePath) {
+
+	size_t markerIndex = 0;
+	int numMarkers = 0;
+
+	std::vector<int>			MarkerIDVector;
+	XYCoord						MarkerCenterXY(0, 0);
+	std::vector<XYCoord>		MarkerXYVector;
+
+	// Process each marker in the input string
+	while (true) {
+		// Find and extract marker ID
+		size_t makerIdIndex = fullFileString.find("Markers:marker", markerIndex); //Find location of marker in the text
+		if (makerIdIndex == std::string::npos) { //If we can't find any more then finish
+			break; // No more markers found
+		}
+
+		size_t makerIdEndIndex = fullFileString.find("\"", makerIdIndex + 14); //Find " in text
+		std::string makerIdSubstring = fullFileString.substr(makerIdIndex + 14, makerIdEndIndex - makerIdIndex - 14); // Extract the marker ID substring
+		std::istringstream makerIdStream(makerIdSubstring);// Create a stringstream for parsing the marker ID
+		int makerId;// Variable to store the parsed marker ID
+		makerIdStream >> makerId; // Extract the marker ID from the stringstream
+
+		// Find and extract location
+		size_t atIndex = fullFileString.find("(at", makerIdEndIndex);
+		size_t locationEndIndex = fullFileString.find(")", atIndex);
+		std::string locationSubstring = fullFileString.substr(atIndex, locationEndIndex - atIndex);
+		std::istringstream locationStream(locationSubstring);
+		std::string atToken;
+		double locationX, locationY;
+		locationStream >> atToken >> locationX >> locationY;
+		MarkerCenterXY.setXYCoord(locationX, locationY);
+
+		MarkerIDVector.push_back(makerId);
+		MarkerXYVector.push_back(MarkerCenterXY);
+
+		//// Display results for each marker
+		//std::cout << "Marker ID: " << makerId << std::endl;
+		//std::cout << "Location: (" << locationX * 2 << ", " << locationY * -2 << ")" << std::endl;
+
+		// Move markerIndex to the next position
+		markerIndex = locationEndIndex;
+		numMarkers++;
 	}
 
 	// Create and write to the marker.dat file
@@ -186,18 +354,21 @@ XYCoord LoadMarkerConfiguation(char* markerFilePath) {
 	std::string rotationMatrixY = "0.0000 1.0000 0.0000 ";
 	std::string rotationMatrixZ = "0.0000 0.0000 1.0000 0.0000"; //Z coord is always 0
 
+	int scalingFactor = 2;
+	int markerSize = 40; //Fixed Size (All markers are the same size so this value doesn't matter too much)
+
 	if (outputFile.is_open()) {
-		outputFile << numberOfPCBMarker << std::endl;
+		outputFile << numMarkers << std::endl;
 
-		for (int i = 0; i < numberOfPCBMarker; i++) {
+		for (int i = 0; i < MarkerIDVector.size(); ++i) {
 
-			outputFile << "#Marker " << i << std::endl;
-			outputFile << std::setw(2) << std::setfill('0') << i << std::endl;
+			outputFile << "#Marker " << MarkerIDVector[i] << std::endl;
+			outputFile << std::setw(2) << std::setfill('0') << MarkerIDVector[i] << std::endl;
 			outputFile << std::fixed << std::setprecision(1);
 			outputFile << markerSize << std::endl;
 			outputFile << std::fixed << std::setprecision(4);
-			outputFile << rotationMatrixX << relativeLocations[i].getXCoord() * scalingFactor << std::endl; //Kicad has scaled the in the PCB editor by 2! Not sure how/ why this has happened
-			outputFile << rotationMatrixY << relativeLocations[i].getYCoord() * scalingFactor << std::endl;
+			outputFile << rotationMatrixX << MarkerXYVector[i].getXCoord() * scalingFactor << std::endl; //Kicad has scaled the in the PCB editor by 2! Not sure how/ why this has happened
+			outputFile << rotationMatrixY << MarkerXYVector[i].getYCoord() * -scalingFactor << std::endl;
 			outputFile << rotationMatrixZ << std::endl;
 			outputFile << "" << std::endl;
 		}
@@ -210,6 +381,5 @@ XYCoord LoadMarkerConfiguation(char* markerFilePath) {
 		std::cerr << "Unable to open the file." << std::endl;
 	}
 
-	//return origin point for later use?
-	return (originMarker);
 }
+
