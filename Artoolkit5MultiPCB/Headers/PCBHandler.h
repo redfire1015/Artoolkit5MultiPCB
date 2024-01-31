@@ -19,16 +19,6 @@
 
 extern PCB loadedPCB;
 
-void LoadPCB(PCB& input, const char* pcbFilePath);
-//
-//double calculateDistance(const XYCoord& point1, const XYCoord& point2);
-//
-//XYCoord LoadMarkerConfiguation(char* markerFilePath);
-
-
-
-
-
 /**
 @param PCB File Path
 @param Marker File Path

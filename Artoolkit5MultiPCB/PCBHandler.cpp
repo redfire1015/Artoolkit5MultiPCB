@@ -1,110 +1,5 @@
 #include "Headers/PCBhandler.h"
 
-void LoadPCB(PCB& input, const char* pcbFilePath) { //Needs to Be adjusted for locaztion of markers
-
-	//Populating Segments 
-	float segWidth = 0.25; //All segments have the same width for testing
-
-	//This is the coordinates from KiCad so going to modify based on relative location
-
-	XYCoord seg1Start(125.867349, 80.01);
-	XYCoord seg1End(152.48, 80.01);
-
-	XYCoord seg2Start(157.48, 80.01);
-	XYCoord seg2End(166.37, 80.01);
-
-	XYCoord seg3Start(103.007349, 80.01);
-	XYCoord seg3End(110.627349, 80.01);
-
-	XYCoord seg4Start(82.55, 80.01);
-	XYCoord seg4End(102.87, 80.01);
-
-	Segment segment1(seg1Start, seg1End, segWidth, "F.Cu");
-	Segment segment2(seg2Start, seg2End, segWidth, "F.Cu");
-	Segment segment3(seg3Start, seg3End, segWidth, "F.Cu");
-	Segment segment4(seg4Start, seg4End, segWidth, "F.Cu");
-
-	// Create an array of segments
-	Segment segmentsArray[] = { segment1, segment2, segment3, segment4 };
-
-	//Populating Polygons
-	  /*Leave for now*/
-
-	//Populating Layer	
-	Layer layer1("F.Cu", 4, 0);
-	Layer layer2("B.cu", 0, 0);
-
-	Layer layer3("F.Adhesive", 0, 0);
-	Layer layer4("B.Adhesive", 0, 0);
-
-	Layer layer5("F.Paste", 0, 0);
-	Layer layer6("B.Paste", 0, 0);
-
-	Layer layer7("F.Silkscreen", 0, 0);
-	Layer layer8("B.Silkscreen", 0, 0);
-
-	Layer layer9("F.Mask", 0, 0);
-	Layer layer10("B.Mask", 0, 0);
-
-	layer1.setLayerSegments(segmentsArray, (sizeof(segmentsArray) / sizeof(Segment)));
-
-	Layer layerArray[] = { layer1, layer2, layer3, layer4,layer5,layer6, layer7, layer8, layer9, layer10 };
-
-	//Populating PCB
-	int numberOfLayers = (sizeof(layerArray) / sizeof(Layer));
-
-	// Dynamically allocate memory for the layerNames array
-	std::string* layerNames = new std::string[numberOfLayers];
-
-	for (int i = 0; i < numberOfLayers; i++)
-	{
-		layerNames[i] = layerArray[i].getLayerName();
-	}
-
-	input.setNumberOfLayers((sizeof(layerArray) / sizeof(Layer)));
-	input.setPCBName("inputPCB");
-	input.setPCBLayerNames(layerNames, input.getNumberOfLayers());
-	input.setPCBLayers(layerArray, input.getNumberOfLayers());
-
-
-	// // Test some getters
-	//std::cout << "PCB Name: " << myPCB.getPCBName() << std::endl;
-
-	//for (size_t i = 0; i < myPCB.getNumberOfLayers(); ++i)
-	//{
-	//	std::cout << "Layer Name: " << myPCB.getPCBLayerNames()[i] << std::endl;
-	//	std::cout << "Number of Segments: " << myPCB.getPCBLayers()[i].getNumberOfLayerSegments() << std::endl;
-	//	std::cout << "Number of Polygons: " << myPCB.getPCBLayers()[i].getNumberOfLayerPolygons() << std::endl;
-	//}
-
-	// Print information about segments and polygons
-	//for (size_t i = 0; i < myPCB.getNumberOfLayers(); ++i)
-	//{
-	//	std::cout << "Layer Name: " << myPCB.getPCBLayerNames()[i] << std::endl;
-
-	//	const Layer& currentLayer = myPCB.getPCBLayers()[i];
-
-	//	// Print information about segments
-	//	std::cout << "Segments:" << std::endl;
-	//	for (int j = 0; j < currentLayer.getNumberOfLayerSegments(); ++j)
-	//	{
-	//		const Segment& currentSegment = currentLayer.getLayerSegments()[j];
-	//		std::cout << "  Segment " << j + 1 << ": Thickness - " << currentSegment.getSegmentThickness() << ", Start Coord - ("
-	//			<< currentSegment.getStartCoord().getXCoord() << ", " << currentSegment.getStartCoord().getYCoord() << "), End Coord - ("
-	//			<< currentSegment.getEndCoord().getXCoord() << ", " << currentSegment.getEndCoord().getYCoord() << ")" << std::endl;
-	//	}
-	//	std::cout << std::endl; // Add a newline for better readability
-	//}
-
-	//Clearing Memory
-	delete[] layerNames;
-}
-
-
-
-
-
-
 PCB	loadedPCB;				//Externed inside PCBHandler
 
 void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
@@ -172,29 +67,24 @@ void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
 
 	// Create a vector of Layer objects
 	std::vector<Layer> layers;
-	for (const std::string& layerName : uniqueLayers) {
+	for (const std::string& currentLayer : uniqueLayers) {
 		// Count the number of segments for the current layer
 		int numSegments = std::count_if(SegmentVector.begin(), SegmentVector.end(),
-			[&layerName](const Segment& seg) { return seg.getLayer() == layerName; });
-
-		// Extract segments for the current layer
-		std::vector<Segment> layerSegments;
-		std::copy_if(SegmentVector.begin(), SegmentVector.end(), std::back_inserter(layerSegments),
-			[&layerName](const Segment& seg) { return seg.getLayer() == layerName; });
+			[&currentLayer](const Segment& seg) { return seg.getLayer() == currentLayer; });
 
 		// Create a Layer object and add it to the vector
-		layers.emplace_back(layerName, numSegments, 0);
+		layers.emplace_back(currentLayer, numSegments, 0);
 	}
 
 	// Iterate through the layers and associate segments
-	for (Layer& layer : layers) {
+	for (Layer& currentLayer : layers) {
 		// Extract segments for the current layer
 		std::vector<Segment> layerSegments;
 		std::copy_if(SegmentVector.begin(), SegmentVector.end(), std::back_inserter(layerSegments),
-			[&layer](const Segment& seg) { return seg.getLayer() == layer.getLayerName(); });
+			[&currentLayer](const Segment& seg) { return seg.getLayer() == currentLayer.getLayerName(); });
 
 		// Set the layer segments
-		layer.setLayerSegments(layerSegments.data(), layerSegments.size());
+		currentLayer.setLayerSegments(layerSegments.data(), layerSegments.size());
 	}
 
 	//Load Segments into PCB Class
@@ -208,24 +98,13 @@ void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
 	//Process Polygons
 	//processPolygons(fullFile);
 
-
-	//Debugging
-	//std::cout << "Total Number of Segments:		" << std::endl;
-	//std::cout << numSegs << std::endl;
-	//std::cout << "Layer List:		" << std::endl;
-	//for (const auto& str : layerList) {
-	//	std::cout << str << " ";
-	//}
-	//std::cout << std::endl;
-	//End Debugging
-
 	pcbInputFile.close();
 	fullFileString.clear();
 }
 
 Segment processSegment(std::string inputString) {
 
-	std::cout << "Found Segment: " << inputString << std::endl;
+	//std::cout << "Found Segment: " << inputString << std::endl;
 
 	// Find and extract start x and y
 	size_t startIndex = inputString.find("start");
