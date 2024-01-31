@@ -1,22 +1,22 @@
 #include "Headers/LayerSegment.h"
 
 // Default constructor
-layerSegment::layerSegment() : SegmentThickness(0.0), startCoord(), endCoord()
+Segment::Segment() : SegmentThickness(0.0), startCoord(), endCoord()
 {
 }
 
 // Parameterized constructor
-layerSegment::layerSegment(const XYCoord& startCoord_input, const XYCoord& endCoord_input, float thickness_input, const std::string& layer_input)
+Segment::Segment(const XYCoord& startCoord_input, const XYCoord& endCoord_input, float thickness_input, const std::string& layer_input)
 	: startCoord(startCoord_input), endCoord(endCoord_input), SegmentThickness(thickness_input) {}
 
 // Copy constructor
-layerSegment::layerSegment(const layerSegment& other)
+Segment::Segment(const Segment& other)
 	: startCoord(other.startCoord), endCoord(other.endCoord), SegmentThickness(other.SegmentThickness)
 {
 }
 
 // Copy assignment operator
-layerSegment& layerSegment::operator=(const layerSegment& other)
+Segment& Segment::operator=(const Segment& other)
 {
 	if (this != &other)
 	{
@@ -28,27 +28,27 @@ layerSegment& layerSegment::operator=(const layerSegment& other)
 }
 
 // Getters for thickness and layer name
-float layerSegment::getSegmentThickness() const { return SegmentThickness; }
+float Segment::getSegmentThickness() const { return SegmentThickness; }
 
 // Accessor methods for start and end coordinates
-const XYCoord& layerSegment::getStartCoord()  const { return startCoord; }
+const XYCoord& Segment::getStartCoord()  const { return startCoord; }
 
-const XYCoord& layerSegment::getEndCoord()  const { return endCoord; }
+const XYCoord& Segment::getEndCoord()  const { return endCoord; }
 
-void layerSegment::setSegmantThickness(float thickness_in)
+void Segment::setSegmantThickness(float thickness_in)
 {
 	SegmentThickness = thickness_in;
 }
 
-void layerSegment::setStartCoord(XYCoord Start_in) {
+void Segment::setStartCoord(XYCoord Start_in) {
 	startCoord = Start_in;
 }
 
-void layerSegment::SetEndCoord(XYCoord End_in) {
+void Segment::SetEndCoord(XYCoord End_in) {
 	endCoord = End_in;
 }
 
 // Destructor
-layerSegment::~layerSegment()
+Segment::~Segment()
 {
 }

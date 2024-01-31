@@ -52,7 +52,7 @@
 
 //My Global Variables
 XYCoord originMarkerPos;
-PCB		loadedPCB;
+PCB	loadedPCB; //Externed inside PCBHandler
 int     xsize, ysize; //moved from init statement
 
 //End My Global Variables
@@ -86,9 +86,6 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	init(argc, argv);
 
-	argSetDispFunc(mainLoop, 1);
-	argSetKeyFunc(keyEvent);
-
 	//Assign Glut Menu
 	glutCreateMenu(menu);
 	glutAddMenuEntry("Select Settings config to load", 1);	//Option 1
@@ -96,6 +93,9 @@ int main(int argc, char* argv[])
 	glutAddMenuEntry("Begin virtual simulation and ESP32 simulation", 3);//Option 2
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//End Glut Menu
+
+	argSetDispFunc(mainLoop, 1);
+	argSetKeyFunc(keyEvent);
 
 	//glutIdleFunc(mainLoop); // Needed when using free glut not sure why
 
@@ -275,10 +275,14 @@ static void   init(int argc, char* argv[])
 			printf("Memory allocation failed.\n");
 		}
 
+		//Initialising the Marker File 
+		//Initialising the PCB
+
 		//int scalingFactor = 2; //May be used
 		originMarkerPos = LoadMarkerConfiguation(markerConfigFilePath);
 
 		LoadPCB(loadedPCB, "Data"); //Populates loadedPCB with PCB data
+
 
 		configName[0] = '\0';
 		vconf[0] = '\0';
@@ -398,7 +402,7 @@ void drawPCB(ARdouble trans1[3][4]) {
 		// Print information about segments
 		for (int j = 0; j < currentLayer.getNumberOfLayerSegments(); ++j)
 		{
-			const layerSegment& currentSegment = currentLayer.getLayerSegments()[j];
+			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
 			//currentSegment.getSegmentThickness()
 			if (currentLayer.getLayerName() == "F.Cu") {
 				//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness

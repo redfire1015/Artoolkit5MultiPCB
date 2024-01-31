@@ -19,13 +19,13 @@ void LoadPCB(PCB& input, const char* pcbFilePath) { //Needs to Be adjusted for l
 	XYCoord seg4Start(82.55, 80.01);
 	XYCoord seg4End(102.87, 80.01);
 
-	layerSegment segment1(seg1Start, seg1End, segWidth, "F.Cu");
-	layerSegment segment2(seg2Start, seg2End, segWidth, "F.Cu");
-	layerSegment segment3(seg3Start, seg3End, segWidth, "F.Cu");
-	layerSegment segment4(seg4Start, seg4End, segWidth, "F.Cu");
+	Segment segment1(seg1Start, seg1End, segWidth, "F.Cu");
+	Segment segment2(seg2Start, seg2End, segWidth, "F.Cu");
+	Segment segment3(seg3Start, seg3End, segWidth, "F.Cu");
+	Segment segment4(seg4Start, seg4End, segWidth, "F.Cu");
 
 	// Create an array of segments
-	layerSegment segmentsArray[] = { segment1, segment2, segment3, segment4 };
+	Segment segmentsArray[] = { segment1, segment2, segment3, segment4 };
 
 	//Populating Polygons
 	  /*Leave for now*/
@@ -46,7 +46,7 @@ void LoadPCB(PCB& input, const char* pcbFilePath) { //Needs to Be adjusted for l
 	Layer layer9("F.Mask", 0, 0);
 	Layer layer10("B.Mask", 0, 0);
 
-	layer1.setLayerSegments(segmentsArray, (sizeof(segmentsArray) / sizeof(layerSegment)));
+	layer1.setLayerSegments(segmentsArray, (sizeof(segmentsArray) / sizeof(Segment)));
 
 	Layer layerArray[] = { layer1, layer2, layer3, layer4,layer5,layer6, layer7, layer8, layer9, layer10 };
 
@@ -88,8 +88,8 @@ void LoadPCB(PCB& input, const char* pcbFilePath) { //Needs to Be adjusted for l
 	//	std::cout << "Segments:" << std::endl;
 	//	for (int j = 0; j < currentLayer.getNumberOfLayerSegments(); ++j)
 	//	{
-	//		const layerSegment& currentSegment = currentLayer.getLayerSegments()[j];
-	//		std::cout << "  layerSegment " << j + 1 << ": Thickness - " << currentSegment.getSegmentThickness() << ", Start Coord - ("
+	//		const Segment& currentSegment = currentLayer.getLayerSegments()[j];
+	//		std::cout << "  Segment " << j + 1 << ": Thickness - " << currentSegment.getSegmentThickness() << ", Start Coord - ("
 	//			<< currentSegment.getStartCoord().getXCoord() << ", " << currentSegment.getStartCoord().getYCoord() << "), End Coord - ("
 	//			<< currentSegment.getEndCoord().getXCoord() << ", " << currentSegment.getEndCoord().getYCoord() << ")" << std::endl;
 	//	}

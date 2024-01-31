@@ -39,9 +39,9 @@ public:
 	void setLayerName(const std::string& name);
 
 	// Getter and setter for layerSegments
-	const layerSegment* getLayerSegments() const;
+	const Segment* getLayerSegments() const;
 
-	void setLayerSegments(const layerSegment* segments, int count);
+	void setLayerSegments(const Segment* segments, int count);
 
 	// Getter and setter for layerPolygons
 	const layerPolygon* getLayerPolygons() const;
@@ -52,7 +52,7 @@ private:
 	std::string layerName;
 	int numberOfLayerSegments;
 	int numberOfLayerPolygons;
-	layerSegment* layerSegments;
+	Segment* layerSegments;
 	layerPolygon* layerPolygons;
 };
 
