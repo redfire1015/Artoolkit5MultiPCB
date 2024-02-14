@@ -37,11 +37,17 @@
     <Filter Include="Header Files\MatrixSolver">
       <UniqueIdentifier>{e3410ed5-1e19-4683-a9e5-f5469b8f89da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\SimulationHandlerSource">
+      <UniqueIdentifier>{700bfdb3-823d-4b17-8677-f02445255917}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\SimulationHandler">
       <UniqueIdentifier>{902c568e-e9e9-478a-a0c0-9f7fd8f6a8cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\SimulationHandlerSource">
-      <UniqueIdentifier>{700bfdb3-823d-4b17-8677-f02445255917}</UniqueIdentifier>
+    <Filter Include="Header Files\SettingsHandler">
+      <UniqueIdentifier>{eb8caac3-549e-4bdf-993a-afb2da59e475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SettingsHandlerSource">
+      <UniqueIdentifier>{5835e2cd-212c-4ee9-a7ea-4c8a62bb67cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +78,33 @@
     <ClCompile Include="ComPortSource.cpp">
       <Filter>Source Files\ComPortSource</Filter>
     </ClCompile>
+    <ClCompile Include="SettingsHandlerSource.cpp">
+      <Filter>Source Files\SettingsHandlerSource</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files\SettingsHandlerSource</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawing.cpp">
+      <Filter>Source Files\GUISource</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix.c">
+      <Filter>Source Files\MatrixSolverSource</Filter>
+    </ClCompile>
+    <ClCompile Include="matrixio.c">
+      <Filter>Source Files\MatrixSolverSource</Filter>
+    </ClCompile>
+    <ClCompile Include="msgmres.c">
+      <Filter>Source Files\MatrixSolverSource</Filter>
+    </ClCompile>
+    <ClCompile Include="msolve.c">
+      <Filter>Source Files\MatrixSolverSource</Filter>
+    </ClCompile>
+    <ClCompile Include="standAloneSolve.c">
+      <Filter>Source Files\MatrixSolverSource</Filter>
+    </ClCompile>
+    <ClCompile Include="vtypes.c">
+      <Filter>Source Files\MatrixSolverSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Layer.h">
@@ -97,6 +130,33 @@
     </ClInclude>
     <ClInclude Include="Headers\ComPortHandler.h">
       <Filter>Header Files\ComPortHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SettingsHandler.h">
+      <Filter>Header Files\SettingsHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Settings.h">
+      <Filter>Header Files\SettingsHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Drawing.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\math\vtypes.h">
+      <Filter>Header Files\MatrixSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\standAloneSolve.h">
+      <Filter>Header Files\MatrixSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\matrix.h">
+      <Filter>Header Files\MatrixSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\msolve.h">
+      <Filter>Header Files\MatrixSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\solverdata.h">
+      <Filter>Header Files\MatrixSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\msgmres.h">
+      <Filter>Header Files\MatrixSolver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

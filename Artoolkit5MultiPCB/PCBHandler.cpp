@@ -1,6 +1,6 @@
 #include "Headers/PCBhandler.h"
 
-PCB	loadedPCB;				//Externed inside PCBHandler
+PCB	loadedPCB;				//Extern inside PCBHandler
 
 void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
 {
@@ -47,16 +47,6 @@ void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
 	}
 
 	//Find List of all unique Layers
-	// 
-	//Collect unique layer names using an unordered_set
-	//std::unordered_set<std::string> uniqueStrings;
-	//for (const auto& layerName : SegmentVector) {
-	//	uniqueStrings.insert(layerName.getLayer());
-	//}
-
-	////Display the total number of unique strings
-	//std::cout << "Total number of unique strings: " << uniqueStrings.size() << "\n";
-
 	// Use a set to store unique layer names
 	std::set<std::string> uniqueLayers;
 
@@ -87,7 +77,7 @@ void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
 		currentLayer.setLayerSegments(layerSegments.data(), layerSegments.size());
 	}
 
-	//Load Segments into PCB Class
+	//Clear Old layers and Load Segments into PCB Class
 	loadedPCB.setNumberOfLayers(layers.size());
 	loadedPCB.setPCBLayers(layers.data(), loadedPCB.getNumberOfLayers());
 

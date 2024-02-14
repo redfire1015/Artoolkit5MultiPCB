@@ -1,22 +1,23 @@
-#ifndef GUI_def
-#define GUI_def
+#ifndef DRAW_def
+#define DRAW_def
 
 //********************************************************//
 //						Dependancies
 //********************************************************//
-#define NOMINMAX
 
-#include <Windows.h> //For System Handling
-#include "SettingsHandler.h"
+#include <AR/ar.h>
+#include <AR/gsub.h>
 
-extern char* charFilePath;
+#include <GL/glut.h>
+#include "PCB.h"
+
+extern PCB loadedPCB;
+extern ARHandle* arHandle;
 
 //********************************************************//
-//						FUNCTIONS
+//						Function Definition
 //********************************************************//
 
+void drawPCB(ARdouble trans1[3][4]);
 
-//Function to create the right click context menu
-void menu(int id);
-
-#endif //!GUI_def
+#endif //!DRAW_def

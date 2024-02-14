@@ -143,23 +143,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ComPortSource.cpp" />
+    <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="matrix.c" />
+    <ClCompile Include="matrixio.c" />
+    <ClCompile Include="msgmres.c" />
+    <ClCompile Include="msolve.c" />
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="LayerPolygons.cpp" />
     <ClCompile Include="PCBHandler.cpp" />
     <ClCompile Include="LayerSegment.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SettingsHandlerSource.cpp" />
+    <ClCompile Include="standAloneSolve.c" />
+    <ClCompile Include="vtypes.c" />
     <ClCompile Include="XYCoord.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\ComPortHandler.h" />
+    <ClInclude Include="Headers\Drawing.h" />
     <ClInclude Include="Headers\GUI.h" />
     <ClInclude Include="Headers\Layer.h" />
+    <ClInclude Include="Headers\math\vtypes.h" />
+    <ClInclude Include="Headers\matrix.h" />
+    <ClInclude Include="Headers\msgmres.h" />
+    <ClInclude Include="Headers\msolve.h" />
     <ClInclude Include="Headers\PCB.h" />
     <ClInclude Include="Headers\LayerPolygons.h" />
     <ClInclude Include="Headers\PCBHandler.h" />
     <ClInclude Include="Headers\LayerSegment.h" />
+    <ClInclude Include="Headers\Settings.h" />
+    <ClInclude Include="Headers\SettingsHandler.h" />
+    <ClInclude Include="Headers\solverdata.h" />
+    <ClInclude Include="Headers\standAloneSolve.h" />
     <ClInclude Include="Headers\XYCoord.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

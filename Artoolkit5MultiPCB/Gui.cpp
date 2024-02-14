@@ -4,6 +4,9 @@
 bool espConnected = false;
 bool settingConfigLoaded = false;
 
+char* charFilePath = nullptr;
+
+settings readSettings;
 
 //********************************************************//
 //					GLUT Menu Definition
@@ -33,25 +36,54 @@ void menu(int id)
 		{
 			// The user selected a file, and the file path is in szFileName
 			// You can use szFileName for further processing
-			MessageBox(NULL, szFileName, L"File Selected", MB_OK);
+			//MessageBox(NULL, szFileName, L"File Selected", MB_OK);
+			settingConfigLoaded = true;
 		}
-		settingConfigLoaded = true;
+
+
+		//Converting Tchar to Char 
+		// Calculate the size of the buffer needed
+		int charCount = WideCharToMultiByte(CP_UTF8, 0, szFileName, -1, NULL, 0, NULL, NULL);
+
+		// Allocate a buffer for the converted string
+		charFilePath = new char[charCount];
+
+		// Perform the conversion
+		WideCharToMultiByte(CP_UTF8, 0, szFileName, -1, charFilePath, charCount, NULL, NULL);
+
+		loadSettings(charFilePath);//Load Settings from the Selected File Path
+		refreshSettings();
+
 		break;
 	}
 
-	case 2: { //Begin virtual only simulation
+	case 2: { //Refresh Already Loaded Settings File
 		if (settingConfigLoaded == false) {
 			MessageBox(NULL, L"Load Settings Config before continuing!", L"Warning", MB_OK | MB_ICONWARNING); //Alert trying to run simulation before settings have been configured
+			break;
 		}
+		loadSettings(charFilePath);//Load Settings from the Selected File Path
+		refreshSettings();
+		break;
+	}
+
+	case 3: { //Begin virtual only simulation
+		if (settingConfigLoaded == false) {
+			MessageBox(NULL, L"Load Settings Config before continuing!", L"Warning", MB_OK | MB_ICONWARNING); //Alert trying to run simulation before settings have been configured
+			break;
+		}
+
 		break;
 	}
 
 
-	case 3: {
+	case 4: {
 		// Begin virtual and esp simulation
 		if (settingConfigLoaded == false) {
 			MessageBox(NULL, L"Load Settings Config before continuing!", L"Warning", MB_OK | MB_ICONWARNING); //Alert trying to run simulation before settings have been configured
+			break;
 		}
+
 		break;
 	}
 	}

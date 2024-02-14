@@ -13,5 +13,4 @@ bool getComPorts(std::vector<std::string>& comPortList); // -  Might not be need
 bool startESPSimulation();
 
 
-
 #endif // !ComPort_def
