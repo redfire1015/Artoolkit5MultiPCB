@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <set>
+#include <regex>
 
 extern PCB loadedPCB;
 

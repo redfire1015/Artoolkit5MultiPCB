@@ -30,9 +30,13 @@ void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
 	}
 
 	std::string line;
-	int numSegs = 0;
 
+	int numSegs = 0;
 	std::vector<Segment>	SegmentVector;
+
+	std::vector<std::pair<int, std::string>> nets;
+	std::regex netPattern("\\(net (\\d+) \"([^\"]+)\"\\)");
+	std::set<std::pair<int, std::string>> uniqueNets; // Set to store unique nets
 
 	while (std::getline(pcbInputFile, line)) //Iterate through the whole file
 	{
@@ -43,7 +47,26 @@ void loadKicadPCBFile(char* markerFilePath, const char* pcbFilePath)
 			SegmentVector.push_back(processSegment(line)); //Process this line
 			numSegs++;
 		}
+
 		fullFileString += line;
+
+		std::smatch match;
+		if (std::regex_search(line, match, netPattern)) {
+			if (match.size() == 3) {
+				int netNumber = std::stoi(match[1]);
+				std::string netName = match[2];
+				// Check if the net is already in the set before adding
+				if (uniqueNets.emplace(netNumber, netName).second) {
+					// If the pair was added (i.e., it was unique), add it to the vector
+					nets.emplace_back(netNumber, netName);
+				}
+			}
+		}
+	}
+
+	// Print the stored nets for verification
+	for (const auto& net : nets) {
+		std::cout << "Net number: " << net.first << ", Net name: " << net.second << std::endl;
 	}
 
 	//Find List of all unique Layers
@@ -158,7 +181,7 @@ Segment processSegment(std::string inputString) {
 	XYCoord startCoord(startX, startY);
 	XYCoord endCoord(endX, endY);
 
-	Segment tempSegment(startCoord, endCoord, width, layerName);
+	Segment tempSegment(startCoord, endCoord, width, netNumber, layerName);
 
 	return tempSegment;
 

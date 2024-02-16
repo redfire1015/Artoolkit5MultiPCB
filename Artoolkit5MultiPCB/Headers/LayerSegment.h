@@ -10,8 +10,8 @@ public:
 	// Default constructor
 	Segment();
 
-	// Parameterized constructor
-	Segment(const XYCoord& startCoord_input, const XYCoord& endCoord_input, float thickness_input, const std::string& layer_input);
+	// Parametrized constructor
+	Segment(const XYCoord& startCoord_input, const XYCoord& endCoord_input, float thickness_input, int segmentNet_input, const std::string& layer_input);
 
 	// Copy constructor
 	Segment(const Segment& other);
@@ -22,12 +22,18 @@ public:
 	// Getters for thickness and layer name
 	float getSegmentThickness() const;
 
+	// Getters for segment net
+	float getSegmentNet() const;
+
 	// Accessor methods for start and end coordinates
 	const XYCoord& getStartCoord() const;
 
 	const XYCoord& getEndCoord() const;
 
 	void setSegmantThickness(float thickness_in);
+
+	// Getters for segment net
+	void setSegmentNet(int net_in);
 
 	void setStartCoord(XYCoord Start_in);
 
@@ -46,7 +52,8 @@ private:
 	XYCoord startCoord;     // Start XY
 	XYCoord endCoord;       // End XY
 	float SegmentThickness; // Thickness of a trace (aka Segment)
-	std::string layer; //layer the segment is on
+	std::string layer;	//layer the segment is on
+	int segmentNet;		//net Assigned to the segment
 };
 
 #endif
