@@ -1,5 +1,7 @@
 #include "Headers/SettingsHandler.h"
 
+settings readSettings;
+
 void loadSettings(const char* settingsFilePath) {
 
 	//Read settings into readSettings object

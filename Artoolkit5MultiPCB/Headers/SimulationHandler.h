@@ -6,13 +6,18 @@
 #include <iostream>
 #include <chrono>
 
+#include "SettingsHandler.h" //Gives Access to the loaded settings instance
+
 //********************************************************//
 //						Variables
 //********************************************************//
 
-// any source file that includes this will be able to use "global_x"
-extern double simulationStartTime;
+extern std::chrono::system_clock::time_point currentTime;
+extern std::chrono::system_clock::time_point previousTime;
 
+extern double timeSinceSimulationStart;
+
+extern bool simulationStarted;
 
 //********************************************************//
 //						FUNCTIONS
@@ -20,6 +25,6 @@ extern double simulationStartTime;
 
 
 //Function to create the right click context menu
-void calculateTime();
+void runSimulation(double TimeSinceSimulationStart);
 
 #endif

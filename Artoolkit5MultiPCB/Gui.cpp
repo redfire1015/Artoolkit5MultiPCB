@@ -1,12 +1,10 @@
 #include "Headers/GUI.h"
-#include "Headers/SimulationHandler.h"
+
 
 bool espConnected = false;
 bool settingConfigLoaded = false;
 
 char* charFilePath = nullptr;
-
-settings readSettings;
 
 //********************************************************//
 //					GLUT Menu Definition
@@ -73,17 +71,11 @@ void menu(int id)
 			break;
 		}
 		//Start Simulation
+		simulationStarted = true;
+		timeSinceSimulationStart = 0;
+
 		// Get the current time point
-		auto currentTime = std::chrono::system_clock::now();
-
-		// Convert the current time point to milliseconds since epoch
-		auto durationSinceEpoch = currentTime.time_since_epoch();
-
-		// Convert the duration to milliseconds as a double
-		simulationStartTime = std::chrono::duration<double, std::milli>(durationSinceEpoch).count();
-
-		std::cout << "Current time in milliseconds since epoch: " << simulationStartTime << std::endl;
-
+		previousTime = std::chrono::system_clock::now();
 
 
 		break;
@@ -92,10 +84,23 @@ void menu(int id)
 
 	case 4: {
 		// Begin virtual and esp simulation
+		if (simulationStarted == false) {
+			MessageBox(NULL, L"Cannot End Simulation as Simulation not Started!", L"Warning", MB_OK | MB_ICONWARNING); //Alert trying to run simulation before settings have been configured
+			break;
+		}
+		//Start Simulation
+		simulationStarted = false;
+		timeSinceSimulationStart = 0;
+	}
+
+
+	case 5: {
+		// Begin virtual and esp simulation
 		if (settingConfigLoaded == false) {
 			MessageBox(NULL, L"Load Settings Config before continuing!", L"Warning", MB_OK | MB_ICONWARNING); //Alert trying to run simulation before settings have been configured
 			break;
 		}
+
 
 		break;
 	}

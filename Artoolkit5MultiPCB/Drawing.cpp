@@ -1,11 +1,25 @@
 #include "Headers/Drawing.h"
 
-
-
 void drawPCB(ARdouble trans1[3][4]) {
 
 	ARdouble  gl_para[16];
 	int       debugMode;
+
+	if (simulationStarted)
+	{
+		//Get the Current time
+		currentTime = std::chrono::system_clock::now();
+
+
+		// Calculate the difference
+		timeSinceSimulationStart += std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
+
+		previousTime = currentTime;
+
+		std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
+
+		runSimulation(timeSinceSimulationStart);
+	}
 
 	/* load the camera transformation matrix */
 	glMatrixMode(GL_MODELVIEW);
@@ -22,10 +36,6 @@ void drawPCB(ARdouble trans1[3][4]) {
 	arGetDebugMode(arHandle, &debugMode);
 
 	//std::cout << glGetError() << std::endl;
-	// 
-	//float lineWidth[2];
-	//glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
-	//gets Supported widths and returns into  array - Not in this case we are told 0.5-10 on GTX1060 on windows 11
 
 	//Print information about segments and polygons
 	for (size_t i = 0; i < loadedPCB.getNumberOfLayers(); ++i)

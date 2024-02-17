@@ -97,7 +97,8 @@ int main(int argc, char* argv[])
 	glutAddMenuEntry("Select Settings config to load", 1);	//Option 1
 	glutAddMenuEntry("Refresh Settings from File", 2);//Option 2
 	glutAddMenuEntry("Begin virtual simulation only", 3);//Option 2
-	glutAddMenuEntry("Begin virtual simulation and ESP32 simulation", 4);//Option 2
+	glutAddMenuEntry("End virtual simulation", 4);//Option 2
+	glutAddMenuEntry("Begin virtual simulation and ESP32 simulation", 5);//Option 2
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	//End Glut Menu
 

@@ -7,7 +7,7 @@
 #define NOMINMAX
 
 #include <Windows.h> //For System Handling
-#include "SettingsHandler.h"
+#include "SimulationHandler.h"
 
 extern char* charFilePath;
 
