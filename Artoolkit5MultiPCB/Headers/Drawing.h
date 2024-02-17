@@ -7,8 +7,9 @@
 
 #include <AR/ar.h>
 #include <AR/gsub.h>
-
 #include <GL/glut.h>
+
+#include "Headers/SimulationHandler.h"
 #include "PCB.h"
 
 extern PCB loadedPCB;

@@ -157,6 +157,7 @@
     <ClCompile Include="LayerSegment.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="SettingsHandlerSource.cpp" />
+    <ClCompile Include="SimulationHandler.cpp" />
     <ClCompile Include="standAloneSolve.c" />
     <ClCompile Include="vtypes.c" />
     <ClCompile Include="XYCoord.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Headers\LayerSegment.h" />
     <ClInclude Include="Headers\Settings.h" />
     <ClInclude Include="Headers\SettingsHandler.h" />
+    <ClInclude Include="Headers\SimulationHandler.h" />
     <ClInclude Include="Headers\solverdata.h" />
     <ClInclude Include="Headers\standAloneSolve.h" />
     <ClInclude Include="Headers\XYCoord.h" />

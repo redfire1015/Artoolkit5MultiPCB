@@ -105,6 +105,9 @@
     <ClCompile Include="vtypes.c">
       <Filter>Source Files\MatrixSolverSource</Filter>
     </ClCompile>
+    <ClCompile Include="SimulationHandler.cpp">
+      <Filter>Source Files\SimulationHandlerSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Layer.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="Headers\msgmres.h">
       <Filter>Header Files\MatrixSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SimulationHandler.h">
+      <Filter>Header Files\SimulationHandler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

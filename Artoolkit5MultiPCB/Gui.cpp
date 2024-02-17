@@ -1,5 +1,5 @@
 #include "Headers/GUI.h"
-
+#include "Headers/SimulationHandler.h"
 
 bool espConnected = false;
 bool settingConfigLoaded = false;
@@ -72,6 +72,19 @@ void menu(int id)
 			MessageBox(NULL, L"Load Settings Config before continuing!", L"Warning", MB_OK | MB_ICONWARNING); //Alert trying to run simulation before settings have been configured
 			break;
 		}
+		//Start Simulation
+		// Get the current time point
+		auto currentTime = std::chrono::system_clock::now();
+
+		// Convert the current time point to milliseconds since epoch
+		auto durationSinceEpoch = currentTime.time_since_epoch();
+
+		// Convert the duration to milliseconds as a double
+		simulationStartTime = std::chrono::duration<double, std::milli>(durationSinceEpoch).count();
+
+		std::cout << "Current time in milliseconds since epoch: " << simulationStartTime << std::endl;
+
+
 
 		break;
 	}

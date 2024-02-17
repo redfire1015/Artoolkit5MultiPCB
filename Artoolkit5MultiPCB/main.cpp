@@ -86,11 +86,6 @@ static void             keyEvent(unsigned char key, int x, int y);
 
 
 
-//MY FUNCTIONS
-void drawPCB(ARdouble trans1[3][4]);
-//END MY FUNCTIONS
-
-
 int main(int argc, char* argv[])
 {
 
