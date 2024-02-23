@@ -77,13 +77,15 @@ void menu(int id)
 		// Get the current time point
 		previousTime = std::chrono::system_clock::now();
 
+		//Setup the Matrices 
+		populateMatrix();
 
 		break;
 	}
 
 
 	case 4: {
-		// Begin virtual and esp simulation
+		// End Virtual Only Simulation
 		if (simulationStarted == false) {
 			MessageBox(NULL, L"Cannot End Simulation as Simulation not Started!", L"Warning", MB_OK | MB_ICONWARNING); //Alert trying to run simulation before settings have been configured
 			break;

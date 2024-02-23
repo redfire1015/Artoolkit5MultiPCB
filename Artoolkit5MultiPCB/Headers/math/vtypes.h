@@ -9,6 +9,10 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #ifndef VP_MATH_TYPES_H
 #define VP_MATH_TYPES_H
@@ -17,21 +21,25 @@
 #define ML_INT_DEFINED
 #include <stdint.h>
 #include <stdio.h>
-typedef int64_t     ML_INT;
-typedef uint64_t    ML_UINT;
+	typedef int64_t     ML_INT;
+	typedef uint64_t    ML_UINT;
 #endif
 
-ML_INT VP_ftell( FILE *fp );
+	ML_INT VP_ftell(FILE* fp);
 
-ML_INT VP_fseek( FILE *fp, ML_INT offset, ML_INT pos );
+	ML_INT VP_fseek(FILE* fp, ML_INT offset, ML_INT pos);
 
 #if defined(WIN32) || defined (WIN64)
 #include <windows.h>
 #define WINDOWS
 
 #else
-/* TODO: Would need updating with64-bit compatible functions for other os */
+	/* TODO: Would need updating with64-bit compatible functions for other os */
 
 #endif
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

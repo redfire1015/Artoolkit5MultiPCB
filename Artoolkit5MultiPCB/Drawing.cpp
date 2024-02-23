@@ -1,5 +1,7 @@
 #include "Headers/Drawing.h"
 
+bool firstTime = true;
+
 void drawPCB(ARdouble trans1[3][4]) {
 
 	ARdouble  gl_para[16];
@@ -7,18 +9,20 @@ void drawPCB(ARdouble trans1[3][4]) {
 
 	if (simulationStarted)
 	{
+
 		//Get the Current time
 		currentTime = std::chrono::system_clock::now();
 
+		//Calculate Time Step between last function call
+		double timeStep = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
+		previousTime = currentTime;
 
 		// Calculate the difference
-		timeSinceSimulationStart += std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
-
-		previousTime = currentTime;
+		timeSinceSimulationStart += timeStep;
 
 		std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
 
-		runSimulation(timeSinceSimulationStart);
+		runSimulation(timeStep);
 	}
 
 	/* load the camera transformation matrix */

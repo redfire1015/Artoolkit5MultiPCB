@@ -8,11 +8,15 @@
  *		Interface to matrix solvers
  *
  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #ifndef MSOLVE_H
 #define MSOLVE_H
 
- /** Print num of iterations to convergence and final residual information in GMRES algorithms */
+	/** Print num of iterations to convergence and final residual information in GMRES algorithms */
 #define MS_SOLVE_GMRES_PRINTCONV
 
 #ifdef MS_HAVE_KLU
@@ -60,66 +64,70 @@
  *
  * @return a MS_Solver (a pointer to a MS_WData structure)
  */
-MS_Solver MS_initSolver(spMATRIX* LHS, ML_INT solver, void** params);
+	MS_Solver MS_initSolver(spMATRIX* LHS, ML_INT solver, void** params);
 
 
-/** Modify the matrix being used by the solver (left hand side of the equation Ax=b)
- * This differs to MS_changeLHS() in that it assumes the structure of the LHS matrix remaining unchanged (only minor numerical
- * value changes have occured), this is significant for KLU since it may not need to re-analyse the matrix.
- *
- * @param wd is an initialised MS_Solver
- * @param LHS is a pointer to the new left hand side in sparse matrix format
- * @param params is an array of pointers to parameters for the solver, required parameters are indicated above in the solver types.
- * If this is NULL, the parameters supplied when the solver was initialised will continue to be used.
- * @return 1 for success, 0 for fail
- */
-ML_INT MS_modifyLHS(MS_Solver wd, spMATRIX* LHS, void** params);
+	/** Modify the matrix being used by the solver (left hand side of the equation Ax=b)
+	 * This differs to MS_changeLHS() in that it assumes the structure of the LHS matrix remaining unchanged (only minor numerical
+	 * value changes have occured), this is significant for KLU since it may not need to re-analyse the matrix.
+	 *
+	 * @param wd is an initialised MS_Solver
+	 * @param LHS is a pointer to the new left hand side in sparse matrix format
+	 * @param params is an array of pointers to parameters for the solver, required parameters are indicated above in the solver types.
+	 * If this is NULL, the parameters supplied when the solver was initialised will continue to be used.
+	 * @return 1 for success, 0 for fail
+	 */
+	ML_INT MS_modifyLHS(MS_Solver wd, spMATRIX* LHS, void** params);
 
 
-/** Change the matrix being used by the solver (left hand side of the equation Ax=b)
- * This differs to MS_modifyLHS() in that it assumes the new LHS matrix is completely different to the old.
- * This is significant for KLU since it needs to re-analyse the matrix.
- *
- * @param wd is an initialised MS_Solver
- * @param LHS is a pointer to the new left hand side in sparse matrix format
- * @param params is an array of pointers to parameters for the solver, required parameters are indicated above in the solver types.
- * If this is NULL, the parameters supplied when the solver was initialised will continue to be used.
- * @return 1 for success, 0 for fail
- */
-ML_INT MS_changeLHS(MS_Solver wd, spMATRIX* LHS, void** params);
+	/** Change the matrix being used by the solver (left hand side of the equation Ax=b)
+	 * This differs to MS_modifyLHS() in that it assumes the new LHS matrix is completely different to the old.
+	 * This is significant for KLU since it needs to re-analyse the matrix.
+	 *
+	 * @param wd is an initialised MS_Solver
+	 * @param LHS is a pointer to the new left hand side in sparse matrix format
+	 * @param params is an array of pointers to parameters for the solver, required parameters are indicated above in the solver types.
+	 * If this is NULL, the parameters supplied when the solver was initialised will continue to be used.
+	 * @return 1 for success, 0 for fail
+	 */
+	ML_INT MS_changeLHS(MS_Solver wd, spMATRIX* LHS, void** params);
 
 
-/** Solve Ax = b using an initialised MS_Solver.
- * Note A, the matrix, has already been supplied through either MS_initSolver(), MS_changeLHS() or MS_modifyLHS().
- *
- * @param wd is an initialised MS_Solver
- * @param b is b in Ax = b
- * @param x is the solution, x in Ax = b
- * @return 1 for success, 0 for fail
- */
-ML_INT MS_solve(MS_Solver wd, double* b, double* x);
+	/** Solve Ax = b using an initialised MS_Solver.
+	 * Note A, the matrix, has already been supplied through either MS_initSolver(), MS_changeLHS() or MS_modifyLHS().
+	 *
+	 * @param wd is an initialised MS_Solver
+	 * @param b is b in Ax = b
+	 * @param x is the solution, x in Ax = b
+	 * @return 1 for success, 0 for fail
+	 */
+	ML_INT MS_solve(MS_Solver wd, double* b, double* x);
 
 
-/** Initialises a MS_Solver.
- * Just sets all internal storage pointers to NULL and all indeces/sizes to zero
- * @param wd is the solver to initialise.
- */
-void MS_initWD(MS_Solver wd);
+	/** Initialises a MS_Solver.
+	 * Just sets all internal storage pointers to NULL and all indeces/sizes to zero
+	 * @param wd is the solver to initialise.
+	 */
+	void MS_initWD(MS_Solver wd);
 
 
-/** Frees a MS_Solver.
- * Deallocates all memory used by the solver, only attempts to free variables used by solver.
- * @param wd is the solver to free.
- * @return
- */
-ML_INT MS_freeSolver(MS_Solver wd);
+	/** Frees a MS_Solver.
+	 * Deallocates all memory used by the solver, only attempts to free variables used by solver.
+	 * @param wd is the solver to free.
+	 * @return
+	 */
+	ML_INT MS_freeSolver(MS_Solver wd);
 
 
-/** Frees a MS_Solver.
- * Deallocates all memory used by the solver, attempts to free everything.
- * @param wd is the solver to free.
- * @return
- */
-void MS_cleanWD(MS_Solver wd);
+	/** Frees a MS_Solver.
+	 * Deallocates all memory used by the solver, attempts to free everything.
+	 * @param wd is the solver to free.
+	 * @return
+	 */
+	void MS_cleanWD(MS_Solver wd);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
