@@ -33,7 +33,7 @@ Segment& Segment::operator=(const Segment& other)
 float Segment::getSegmentThickness() const { return SegmentThickness; }
 
 // Getters for segment net
-float Segment::getSegmentNet() const { return segmentNet; };
+int Segment::getSegmentNet() const { return segmentNet; };
 
 // Accessor methods for start and end coordinates
 const XYCoord& Segment::getStartCoord()  const { return startCoord; }

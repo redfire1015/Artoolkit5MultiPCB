@@ -20,20 +20,23 @@ extern double R;
 extern double Vs;
 
 extern spMATRIX A;
+extern double A_aa[];
+extern ML_INT A_ja[];
+extern ML_INT A_ia[];
+
 extern spMATRIX M;
+extern double M_aa[];
+extern ML_INT M_ja[];
+extern ML_INT M_ia[];
+
 extern double b[];
 //End Matrix Variables
 
 
-
 //Variables for transient Solving
-extern double hd;
-extern double h;
+extern double hd;			//default timestep
+extern double prevTimestep;	//Previous TimeStep
 extern spMATRIX LHS;
-
-extern ML_INT mat_i, mat_j, mat_k1, mat_k2, mat_j1, mat_j2, mat_jl;
-extern ML_INT* ia;
-extern ML_INT* mind, * aind;
 
 extern double* transientCurrentSolution;
 extern double* transientNextSolution;

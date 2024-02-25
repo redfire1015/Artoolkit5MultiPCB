@@ -23,7 +23,7 @@ public:
 	float getSegmentThickness() const;
 
 	// Getters for segment net
-	float getSegmentNet() const;
+	int getSegmentNet() const;
 
 	// Accessor methods for start and end coordinates
 	const XYCoord& getStartCoord() const;

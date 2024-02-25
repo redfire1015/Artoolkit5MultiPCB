@@ -9,7 +9,6 @@ void drawPCB(ARdouble trans1[3][4]) {
 
 	if (simulationStarted)
 	{
-
 		//Get the Current time
 		currentTime = std::chrono::system_clock::now();
 
@@ -20,7 +19,7 @@ void drawPCB(ARdouble trans1[3][4]) {
 		// Calculate the difference
 		timeSinceSimulationStart += timeStep;
 
-		std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
+		//std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
 
 		runSimulation(timeStep);
 	}
@@ -55,6 +54,34 @@ void drawPCB(ARdouble trans1[3][4]) {
 			}
 			if (currentLayer.getLayerName() == "B.Cu") {
 				glColor3f(0.0, 0.0, 1.0); // Set color to red
+			}
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			if (simulationStarted == true) {	//TODO: Testing for simulation voltage
+				if (currentSegment.getSegmentNet() == 6)
+				{
+					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[30] / 12);
+				}
+				if (currentSegment.getSegmentNet() == 7)
+				{
+					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[31] / 12);
+				}
+				if (currentSegment.getSegmentNet() == 8)
+				{
+					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[32] / 12);
+				}
+				if (currentSegment.getSegmentNet() == 9)
+				{
+					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[33] / 12);
+				}
+				if (currentSegment.getSegmentNet() == 10)
+				{
+					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[34] / 12);
+				}
+				if (currentSegment.getSegmentNet() == 11)
+				{
+					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[35] / 12);
+				}
 			}
 			//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
 			//glBegin(GL_LINES);
@@ -110,10 +137,6 @@ void drawPCB(ARdouble trans1[3][4]) {
 			glVertex2f(x3t, y3t);
 			glVertex2f(x4t, y4t);
 			glEnd();
-
-
-
-
 		}
 	}
 
