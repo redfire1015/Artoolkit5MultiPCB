@@ -55,34 +55,61 @@ void drawPCB(ARdouble trans1[3][4]) {
 			if (currentLayer.getLayerName() == "B.Cu") {
 				glColor3f(0.0, 0.0, 1.0); // Set color to red
 			}
+
+
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			if (simulationStarted == true) {	//TODO: Testing for simulation voltage
+
+				// Generate and bind a texture
+				GLuint textureID;
+				glGenTextures(1, &textureID);
+				glBindTexture(GL_TEXTURE_1D, textureID);
+
+				// Set texture parameters
+				glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+				// Load texture data
+				glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB, 2048, 0, GL_RGB, GL_FLOAT, CM_psycha2);
+
+				// Enable texturing
+				glEnable(GL_TEXTURE_1D);
+
 				if (currentSegment.getSegmentNet() == 6)
 				{
-					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[30] / 12);
+					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[30] / 12);
+					glTexCoord1f(transientCurrentSolution[30] / 12);
 				}
 				if (currentSegment.getSegmentNet() == 7)
 				{
-					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[31] / 12);
+					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[31] / 12);
+					glTexCoord1f(transientCurrentSolution[30] / 12);
 				}
 				if (currentSegment.getSegmentNet() == 8)
 				{
-					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[32] / 12);
+					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[32] / 12);
+					glTexCoord1f(transientCurrentSolution[30] / 12);
 				}
 				if (currentSegment.getSegmentNet() == 9)
 				{
-					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[33] / 12);
+					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[33] / 12);
+					glTexCoord1f(transientCurrentSolution[30] / 12);
 				}
 				if (currentSegment.getSegmentNet() == 10)
 				{
-					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[34] / 12);
+					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[34] / 12);
+					glTexCoord1f(transientCurrentSolution[30] / 12);
 				}
 				if (currentSegment.getSegmentNet() == 11)
 				{
-					glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[35] / 12);
+					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[35] / 12);
+					glTexCoord1f(transientCurrentSolution[30] / 12);
 				}
 			}
+
+
 			//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
 			//glBegin(GL_LINES);
 			//glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed

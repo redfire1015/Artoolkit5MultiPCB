@@ -9,8 +9,10 @@
 #include <AR/gsub.h>
 #include <GL/glut.h>
 
+
 #include "SimulationHandler.h"
 #include "PCB.h"
+#include "colourmaps.h"
 
 extern PCB loadedPCB;
 extern ARHandle* arHandle;

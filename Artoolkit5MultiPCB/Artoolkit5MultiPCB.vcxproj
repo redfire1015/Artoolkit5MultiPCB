@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="colourmaps.c" />
     <ClCompile Include="ComPortSource.cpp" />
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Gui.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="XYCoord.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\colourmaps.h" />
     <ClInclude Include="Headers\ComPortHandler.h" />
     <ClInclude Include="Headers\Drawing.h" />
     <ClInclude Include="Headers\GUI.h" />

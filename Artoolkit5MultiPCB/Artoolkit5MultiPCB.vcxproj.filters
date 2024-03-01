@@ -108,6 +108,9 @@
     <ClCompile Include="SimulationHandler.cpp">
       <Filter>Source Files\SimulationHandlerSource</Filter>
     </ClCompile>
+    <ClCompile Include="colourmaps.c">
+      <Filter>Source Files\GUISource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Layer.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="Headers\SimulationHandler.h">
       <Filter>Header Files\SimulationHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\colourmaps.h">
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
