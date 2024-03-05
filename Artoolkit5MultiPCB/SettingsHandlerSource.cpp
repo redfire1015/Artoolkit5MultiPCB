@@ -60,6 +60,16 @@ void loadSettings(const char* settingsFilePath) {
 		else if (key == "Simulation End Time") {
 			readSettings.setEndTime(std::stod(value));
 		}
+		//TODO:
+		//else if (key == "Simulation End Time") {
+		//	readSettings.setEndTime(std::stod(value));
+		//}
+		//else if (key == "Simulation End Time") {
+		//	readSettings.setEndTime(std::stod(value));
+		//}
+		//else if (key == "Simulation End Time") {
+		//	readSettings.setEndTime(std::stod(value));
+		//}
 
 	}
 }

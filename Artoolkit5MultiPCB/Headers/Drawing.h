@@ -16,11 +16,15 @@
 
 extern PCB loadedPCB;
 extern ARHandle* arHandle;
+extern GLuint textureID;
 
 //********************************************************//
 //						Function Definition
 //********************************************************//
 
+void loadVertexToGPU(); //TODO: Function that loads the PCB segments once
+
 void drawPCB(ARdouble trans1[3][4]);
+
 
 #endif //!DRAW_def

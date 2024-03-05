@@ -1,28 +1,11 @@
 #include "Headers/Drawing.h"
 
-bool firstTime = true;
+GLuint textureID;
 
 void drawPCB(ARdouble trans1[3][4]) {
 
 	ARdouble  gl_para[16];
 	int       debugMode;
-
-	if (simulationStarted)
-	{
-		//Get the Current time
-		currentTime = std::chrono::system_clock::now();
-
-		//Calculate Time Step between last function call
-		double timeStep = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
-		previousTime = currentTime;
-
-		// Calculate the difference
-		timeSinceSimulationStart += timeStep;
-
-		//std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
-
-		runSimulation(timeStep);
-	}
 
 	/* load the camera transformation matrix */
 	glMatrixMode(GL_MODELVIEW);
@@ -38,77 +21,97 @@ void drawPCB(ARdouble trans1[3][4]) {
 	glTranslatef(0.0f, 0.0f, 10.0f);
 	arGetDebugMode(arHandle, &debugMode);
 
-	//std::cout << glGetError() << std::endl;
+
+	if (simulationStarted)
+	{
+		//Get the Current time
+		currentTime = std::chrono::system_clock::now();
+
+		//Calculate Time Step between last function call
+		double timeStep = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
+		previousTime = currentTime;
+
+		// Calculate the difference
+		timeSinceSimulationStart += timeStep;
+
+		//std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
+
+		//std::cout << transientNextSolution[30] << std::endl;
+
+
+		runSimulation(timeStep);
+	}
 
 	//Print information about segments and polygons
 	for (size_t i = 0; i < loadedPCB.getNumberOfLayers(); ++i)
 	{
+
 		const Layer& currentLayer = loadedPCB.getPCBLayers()[i];
 		// Print information about segments
 		for (int j = 0; j < currentLayer.getNumberOfLayerSegments(); ++j)
 		{
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
-			//currentSegment.getSegmentThickness()
-			if (currentLayer.getLayerName() == "F.Cu") {
-				glColor3f(1.0, 0.0, 0.0); // Set color to red
+
+			if (simulationStarted == false) {
+				glBindTexture(GL_TEXTURE_1D, 0);	//Unbind any Active Tectures
+				if (currentLayer.getLayerName() == "F.Cu") {
+					glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
+				}
+				if (currentLayer.getLayerName() == "B.Cu") {
+					glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+				}
 			}
-			if (currentLayer.getLayerName() == "B.Cu") {
-				glColor3f(0.0, 0.0, 1.0); // Set color to red
-			}
 
+			if (simulationStarted == true) {	 //TODO: Testing for simulation voltage
 
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			if (simulationStarted == true) {	//TODO: Testing for simulation voltage
-
-				// Generate and bind a texture
-				GLuint textureID;
-				glGenTextures(1, &textureID);
-				glBindTexture(GL_TEXTURE_1D, textureID);
-
-				// Set texture parameters
-				glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-				glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-				// Load texture data
-				glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB, 2048, 0, GL_RGB, GL_FLOAT, CM_psycha2);
-
-				// Enable texturing
-				glEnable(GL_TEXTURE_1D);
-
+				glBindTexture(GL_TEXTURE_1D, 0); //unbind any active textures
 				if (currentSegment.getSegmentNet() == 6)
 				{
-					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[30] / 12);
-					glTexCoord1f(transientCurrentSolution[30] / 12);
+					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[30] / 12)
+					glBindTexture(GL_TEXTURE_1D, textureID);
+					glTexCoord1f(transientCurrentSolution[30] / 12.0);
 				}
-				if (currentSegment.getSegmentNet() == 7)
+				else if (currentSegment.getSegmentNet() == 7)
 				{
 					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[31] / 12);
-					glTexCoord1f(transientCurrentSolution[30] / 12);
+					glBindTexture(GL_TEXTURE_1D, textureID);
+					glTexCoord1f(transientCurrentSolution[31] / 12.0);
 				}
-				if (currentSegment.getSegmentNet() == 8)
+				else if (currentSegment.getSegmentNet() == 8)
 				{
 					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[32] / 12);
-					glTexCoord1f(transientCurrentSolution[30] / 12);
+					glBindTexture(GL_TEXTURE_1D, textureID);
+					glTexCoord1f(transientCurrentSolution[32] / 12.0);
 				}
-				if (currentSegment.getSegmentNet() == 9)
+				else if (currentSegment.getSegmentNet() == 9)
 				{
 					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[33] / 12);
-					glTexCoord1f(transientCurrentSolution[30] / 12);
+					glBindTexture(GL_TEXTURE_1D, textureID);
+					glTexCoord1f(transientCurrentSolution[33] / 12.0);
 				}
-				if (currentSegment.getSegmentNet() == 10)
+				else if (currentSegment.getSegmentNet() == 10)
 				{
 					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[34] / 12);
-					glTexCoord1f(transientCurrentSolution[30] / 12);
+					glBindTexture(GL_TEXTURE_1D, textureID);
+					glTexCoord1f(transientCurrentSolution[34] / 12.0);
 				}
-				if (currentSegment.getSegmentNet() == 11)
+				else if (currentSegment.getSegmentNet() == 11)
 				{
 					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[35] / 12);
-					glTexCoord1f(transientCurrentSolution[30] / 12);
+					glBindTexture(GL_TEXTURE_1D, textureID);
+					glTexCoord1f(transientCurrentSolution[35] / 12.0);
+				}
+				else
+				{
+					glBindTexture(GL_TEXTURE_1D, 0); //Unbind any active textures
+					if (currentLayer.getLayerName() == "F.Cu") {
+						glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
+					}
+					if (currentLayer.getLayerName() == "B.Cu") {
+						glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+					}
 				}
 			}
-
 
 			//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
 			//glBegin(GL_LINES);
@@ -154,8 +157,9 @@ void drawPCB(ARdouble trans1[3][4]) {
 			float x4t = x2 - px * halfThickness;
 			float y4t = y2 - py * halfThickness;
 
-			// Draw the rectangle using GL_TRIANGLES
+
 			glBegin(GL_TRIANGLES);
+			// Draw the rectangle using GL_TRIANGLES
 			glVertex2f(x1t, y1t);
 			glVertex2f(x2t, y2t);
 			glVertex2f(x3t, y3t);

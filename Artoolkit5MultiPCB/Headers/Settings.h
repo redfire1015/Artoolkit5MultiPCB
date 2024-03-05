@@ -18,7 +18,7 @@ public:
 
 	settings(const std::string& filePath, const std::wstring& com, bool virtualOnly, float voltage,
 		int testPoint, int waveForm, double simTime, double step,
-		double start, double end);
+		double start, double end, int colMap, double minColMap, double maxColMap);
 
 	// Copy constructor
 	settings(const settings& other);
@@ -40,6 +40,9 @@ public:
 	double getTimeStep() const;
 	double getStartTime() const;
 	double getEndTime() const;
+	int getColourMap() const;
+	double getColourMapMin() const;
+	double getColourMapMax() const;
 
 	// Setters
 	void setPCBFilePath(const std::string& path);
@@ -52,17 +55,24 @@ public:
 	void setTimeStep(double step);
 	void setStartTime(double start);
 	void setEndTime(double end);
+	void setColourMap(int colMap);
+	void setColourMapMin(double colMapMin);
+	void setColourMapMax(double colMapMax);
+
 private:
-	std::string PCBFilePath;
+	std::string PCBFilePath;//
 	std::wstring comPort;
 	bool virtual_only_simulation;
-	float inputVoltage;
-	int selectedTestPoint;
-	int selectedWaveForm;
+	float inputVoltage;//
+	int selectedTestPoint;//
+	int selectedWaveForm;//
 	double simulationTime;
 	double timeStep;
 	double startTime;
 	double endTime;
+	int colourMap;
+	double minColourMap;
+	double maxColourMap;
 };
 
 

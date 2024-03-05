@@ -210,6 +210,4 @@ void runSimulation(double currentTimestep)
 		transientCurrentSolution[m] = transientNextSolution[m];
 	}
 
-	std::cout << transientNextSolution[30] << std::endl;
-
 }
