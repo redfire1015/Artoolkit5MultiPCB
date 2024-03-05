@@ -52,66 +52,7 @@ void drawPCB(ARdouble trans1[3][4]) {
 		{
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
 
-			if (simulationStarted == false) {
-				glBindTexture(GL_TEXTURE_1D, 0);	//Unbind any Active Tectures
-				if (currentLayer.getLayerName() == "F.Cu") {
-					glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
-				}
-				if (currentLayer.getLayerName() == "B.Cu") {
-					glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
-				}
-			}
-
-			if (simulationStarted == true) {	 //TODO: Testing for simulation voltage
-
-				glBindTexture(GL_TEXTURE_1D, 0); //unbind any active textures
-				if (currentSegment.getSegmentNet() == 6)
-				{
-					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[30] / 12)
-					glBindTexture(GL_TEXTURE_1D, textureID);
-					glTexCoord1f(transientCurrentSolution[30] / 12.0);
-				}
-				else if (currentSegment.getSegmentNet() == 7)
-				{
-					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[31] / 12);
-					glBindTexture(GL_TEXTURE_1D, textureID);
-					glTexCoord1f(transientCurrentSolution[31] / 12.0);
-				}
-				else if (currentSegment.getSegmentNet() == 8)
-				{
-					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[32] / 12);
-					glBindTexture(GL_TEXTURE_1D, textureID);
-					glTexCoord1f(transientCurrentSolution[32] / 12.0);
-				}
-				else if (currentSegment.getSegmentNet() == 9)
-				{
-					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[33] / 12);
-					glBindTexture(GL_TEXTURE_1D, textureID);
-					glTexCoord1f(transientCurrentSolution[33] / 12.0);
-				}
-				else if (currentSegment.getSegmentNet() == 10)
-				{
-					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[34] / 12);
-					glBindTexture(GL_TEXTURE_1D, textureID);
-					glTexCoord1f(transientCurrentSolution[34] / 12.0);
-				}
-				else if (currentSegment.getSegmentNet() == 11)
-				{
-					//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[35] / 12);
-					glBindTexture(GL_TEXTURE_1D, textureID);
-					glTexCoord1f(transientCurrentSolution[35] / 12.0);
-				}
-				else
-				{
-					glBindTexture(GL_TEXTURE_1D, 0); //Unbind any active textures
-					if (currentLayer.getLayerName() == "F.Cu") {
-						glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
-					}
-					if (currentLayer.getLayerName() == "B.Cu") {
-						glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
-					}
-				}
-			}
+			setColoursAndTextures(currentLayer, currentSegment);
 
 			//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
 			//glBegin(GL_LINES);
@@ -173,4 +114,217 @@ void drawPCB(ARdouble trans1[3][4]) {
 
 	glPopMatrix();
 
+}
+
+void setColoursAndTextures(const Layer& currentLayer, const Segment& currentSegment) {
+
+	if (simulationStarted == false) {
+		glBindTexture(GL_TEXTURE_1D, 0);	//Unbind any Active Tectures
+		if (currentLayer.getLayerName() == "F.Cu") {
+			glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
+		}
+		if (currentLayer.getLayerName() == "B.Cu") {
+			glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+		}
+	}
+
+	if (simulationStarted == true) {	 //TODO: Testing for simulation voltage
+
+		float textureCoord;
+		float scaled;
+
+		switch (readSettings.getSelectedTestPoint()) {
+		case 0:
+			glBindTexture(GL_TEXTURE_1D, 0); //unbind any active textures
+			if (currentSegment.getSegmentNet() == 22)
+			{
+				textureCoord = max(min(original_b[1], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 20)
+			{
+				textureCoord = max(min(transientCurrentSolution[2], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_1D, 0); //Unbind any active textures
+				if (currentLayer.getLayerName() == "F.Cu") {
+					glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
+				}
+				if (currentLayer.getLayerName() == "B.Cu") {
+					glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+				}
+			}
+			break;
+		case 1:
+			glBindTexture(GL_TEXTURE_1D, 0); //unbind any active textures
+			if (currentSegment.getSegmentNet() == 23)
+			{
+				textureCoord = max(min(original_b[4], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 21)
+			{
+				textureCoord = max(min(transientCurrentSolution[7], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 2)
+			{
+				textureCoord = max(min(transientCurrentSolution[8], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_1D, 0); //Unbind any active textures
+				if (currentLayer.getLayerName() == "F.Cu") {
+					glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
+				}
+				if (currentLayer.getLayerName() == "B.Cu") {
+					glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+				}
+			}
+			break;
+		case 2:
+			glBindTexture(GL_TEXTURE_1D, 0); //unbind any active textures
+			if (currentSegment.getSegmentNet() == 24)
+			{
+				textureCoord = max(min(original_b[10], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 3)
+			{
+				textureCoord = max(min(transientCurrentSolution[15], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 4)
+			{
+				textureCoord = max(min(transientCurrentSolution[16], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 5)
+			{
+				textureCoord = max(min(transientCurrentSolution[17], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_1D, 0); //Unbind any active textures
+				if (currentLayer.getLayerName() == "F.Cu") {
+					glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
+				}
+				if (currentLayer.getLayerName() == "B.Cu") {
+					glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+				}
+			}
+			break;
+		case 3:
+			glBindTexture(GL_TEXTURE_1D, 0); //unbind any active textures
+			if (currentSegment.getSegmentNet() == 19)
+			{
+				textureCoord = max(min(original_b[19], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 6)
+			{
+				//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[30] / 12)
+
+				textureCoord = max(min(transientCurrentSolution[30], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 7)
+			{
+				//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[31] / 12);
+
+				textureCoord = max(min(transientCurrentSolution[31], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 8)
+			{
+				//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[32] / 12);
+				textureCoord = max(min(transientCurrentSolution[32], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 9)
+			{
+				//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[33] / 12);
+				textureCoord = max(min(transientCurrentSolution[33], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 10)
+			{
+				//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[34] / 12);
+				textureCoord = max(min(transientCurrentSolution[34], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else if (currentSegment.getSegmentNet() == 11)
+			{
+				//glColor4f(0.0, 1.0, 0.0, transientCurrentSolution[35] / 12);
+				textureCoord = max(min(transientCurrentSolution[35], readSettings.getColourMapMax()), readSettings.getColourMapMin());
+				scaled = (textureCoord - readSettings.getColourMapMin()) / (readSettings.getColourMapMax() - readSettings.getColourMapMin());
+
+				glBindTexture(GL_TEXTURE_1D, textureID);
+				glTexCoord1f(scaled);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_1D, 0); //Unbind any active textures
+				if (currentLayer.getLayerName() == "F.Cu") {
+					glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
+				}
+				if (currentLayer.getLayerName() == "B.Cu") {
+					glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+				}
+			}
+			break;
+		default:
+			exit(-1); //Big Error if we get here
+			break;
+		}
+	}
 }

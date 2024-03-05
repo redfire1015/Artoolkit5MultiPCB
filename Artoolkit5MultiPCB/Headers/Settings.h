@@ -62,6 +62,7 @@ public:
 private:
 	std::string PCBFilePath;//
 	std::wstring comPort;
+	//TODO: Layers
 	bool virtual_only_simulation;
 	float inputVoltage;//
 	int selectedTestPoint;//

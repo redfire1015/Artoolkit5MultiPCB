@@ -28,7 +28,6 @@
 #else
 #  include <GLUT/glut.h>
 #endif
-#define GL_CLAMP_TO_EDGE                  0x812F //Added 
 //End Platform Specific includes
 
 //Ar Toolkit includes
@@ -364,24 +363,13 @@ static void   init(int argc, char* argv[])
 		argViewportSetPixFormat(vp, pixFormat);
 	}
 
+	//OpenGL Enables
 	//Enable Colour Blending for glcolor4f
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Enable texturing
 	glEnable(GL_TEXTURE_1D);
-	// Generate and bind a texture
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_1D, textureID);
-
-	// Load texture data
-	glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, 512, 0, GL_RGBA, GL_FLOAT, CM_ansyscont);
-	// Set texture parameters
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//Can Use linear or nearest although nearest makes sense as we are using the same texture for the entire vertex. 
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//Additionally linear can cause problems during the simulation start when the values are slightly negative
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 }
 /* cleanup function called when program exits */
 static void cleanup(void)

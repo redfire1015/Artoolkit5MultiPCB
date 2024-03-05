@@ -29,6 +29,7 @@ extern double M_aa[];
 extern ML_INT M_ja[];
 extern ML_INT M_ia[];
 
+extern double original_b[];
 extern double b[];
 //End Matrix Variables
 

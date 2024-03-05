@@ -57,7 +57,6 @@ void populateMatrix() {
 	M.nr = 36;
 	M.nc = 36;
 
-
 	M.ia = M_ia;
 	M.ja = M_ja;
 	M.aa = M_aa;

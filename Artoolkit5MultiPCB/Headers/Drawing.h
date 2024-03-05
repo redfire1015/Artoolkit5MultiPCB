@@ -24,6 +24,8 @@ extern GLuint textureID;
 
 void loadVertexToGPU(); //TODO: Function that loads the PCB segments once
 
+void setColoursAndTextures(const Layer& currentLayer, const Segment& currentSegment);
+
 void drawPCB(ARdouble trans1[3][4]);
 
 

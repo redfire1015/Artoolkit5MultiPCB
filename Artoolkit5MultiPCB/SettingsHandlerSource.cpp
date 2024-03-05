@@ -48,40 +48,55 @@ void loadSettings(const char* settingsFilePath) {
 		else if (key == "Selected Wave Form") {
 			readSettings.setSelectedWaveForm(std::stoi(value));
 		}
-		else if (key == "Total Simulation Time") {
-			readSettings.setSimulationTime(std::stof(value));
-		}
-		else if (key == "Simulation Time Step") {
-			readSettings.setTimeStep(std::stod(value));
-		}
-		else if (key == "Simulation Start Time") {
-			readSettings.setStartTime(std::stod(value));
-		}
-		else if (key == "Simulation End Time") {
-			readSettings.setEndTime(std::stod(value));
-		}
+		//else if (key == "Total Simulation Time") {
+		//	readSettings.setSimulationTime(std::stof(value));
+		//}
+		//else if (key == "Simulation Time Step") {
+		//	readSettings.setTimeStep(std::stod(value));
+		//}
+		//else if (key == "Simulation Start Time") {
+		//	readSettings.setStartTime(std::stod(value));
+		//}
+		//else if (key == "Simulation End Time") {
+		//	readSettings.setEndTime(std::stod(value));
+		//}
 		//TODO:
-		//else if (key == "Simulation End Time") {
-		//	readSettings.setEndTime(std::stod(value));
-		//}
-		//else if (key == "Simulation End Time") {
-		//	readSettings.setEndTime(std::stod(value));
-		//}
-		//else if (key == "Simulation End Time") {
-		//	readSettings.setEndTime(std::stod(value));
-		//}
-
+		else if (key == "Colour Map") {
+			readSettings.setColourMap(stoi(value));
+		}
+		else if (key == "Colour Map Min") {
+			readSettings.setColourMapMin(stoi(value));
+		}
+		else if (key == "Colour Map Max") {
+			readSettings.setColourMapMax(stoi(value));
+		}
 	}
 }
 
+#define GL_CLAMP_TO_EDGE	0x812F //Added 
 
 void refreshSettings() {
 
 	//Extract pcbFilepath from settings file
 	loadKicadPCBFile(markerConfigFilePath, readSettings.getPCBFilePath().c_str());
 
+	//Update marker config
 	if ((config = arMultiReadConfigFile(configName, arPattHandle)) == NULL) {
 		ARLOGe("config data load error !!\n");
 		exit(0);
 	}
+
+	// Generate and bind a texture
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_1D, textureID);
+
+	// Load texture data
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, 512, 0, GL_RGBA, GL_FLOAT, GUI_getColourMap(readSettings.getColourMap()));
+	// Set texture parameters
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//Can Use linear or nearest although nearest makes sense as we are using the same texture for the entire vertex. 
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//Additionally linear can cause problems during the simulation start when the values are slightly negative
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+
 }

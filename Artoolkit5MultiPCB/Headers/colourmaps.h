@@ -52,6 +52,8 @@ extern "C"
 
 	extern unsigned int CM_Texture[];
 
+	float* GUI_getColourMap(int map);
+
 #endif //!colour_def
 
 #ifdef __cplusplus

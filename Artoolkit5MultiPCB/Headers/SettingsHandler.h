@@ -7,6 +7,7 @@
 
 #include "Settings.h"
 #include "PCBHandler.h"
+#include "Drawing.h"
 #include <AR/ar.h>
 #include <AR/gsub.h>
 #include <AR/arMulti.h>
