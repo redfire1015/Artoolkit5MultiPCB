@@ -159,7 +159,8 @@ void setColoursAndTextures(const Layer& currentLayer, const Segment& currentSegm
 					glColor4f(1.0, 0.0, 0.0, 1.0); // Set colour to red
 				}
 				if (currentLayer.getLayerName() == "B.Cu") {
-					glColor4f(0.0, 0.0, 1.0, 1.0); // Set colour to blue
+					glColor4f(0.0, 0.0,
+						1.0, 1.0); // Set colour to blue
 				}
 			}
 			break;

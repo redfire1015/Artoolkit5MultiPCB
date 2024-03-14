@@ -2,24 +2,25 @@
 
 
 //Matrix Variables
-double C = 470e-6; //Capacitance
-double R = 10e3; //Resistance
-double Vs = 12; // Source Voltage
-//Vs = readSettings.getInputVoltage(); //TODO: 
+double C = 470e-6;	//Default Capacitance
+double R = 10e3;	//Default Resistance
+double Vs = 12;		//Default Source Voltage
 
 spMATRIX A;
-double A_aa[] = { 1,-1,R,1,-1,1,-1,-1,R,1,-1,1,-1,-R,1,-1,-1,1,-1,-1,R,1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-R,1,-1,-1,1,-1,-1,R,1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-R,1,-1,-1, };
-ML_INT A_ja[] = { 0,1,0,2,1,3,4,5,3,7,4,5,6,5,7,8,6,9,10,11,9,15,10,11,12,13,11,15,16,12,13,14,14,16,17,14,18,19,20,18,30,19,20,21,22,20,30,31,21,22,23,24,22,31,32,23,24,25,26,24,32,33,25,26,27,28,26,33,34,27,28,29,28,34,35,29, };
-ML_INT A_ia[] = { 0,2,4,5,8,10,11,13,16,17,20,22,23,26,29,30,32,35,36,39,41,42,45,48,49,52,55,56,59,62,63,66,69,70,72,75,76, };
+double* A_aa = nullptr;
+ML_INT* A_ja = nullptr;
+ML_INT* A_ia = nullptr;
 
 
 spMATRIX M;
-double M_aa[] = { C,C,C,C,C,C,C,C,C,C,C,C, };
-ML_INT M_ja[] = { 2,7,8,15,16,17,30,31,32,33,34,35, };
-ML_INT M_ia[] = { 0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12, };
+double* M_aa = nullptr;
+ML_INT* M_ja = nullptr;
+ML_INT* M_ia = nullptr;
 
-double original_b[] = { 0,Vs,0,0,Vs,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, };
-double b[] = { 0,Vs,0,0,Vs,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, }; //Voltage inputs
+double* original_b = nullptr;
+double* b = nullptr;
+int original_b_size;
+int b_size;
 //End Matrix Variables
 
 //Variables for transient Solving
@@ -46,6 +47,59 @@ bool simulationStarted = false;
 //End Timing Variables
 
 void populateMatrix() {
+
+	Vs = readSettings.getInputVoltage(); //Get the Input voltage from incomming settings
+
+	//Some Temp arrays which contain the matrix data
+	//These arrays could be replaced with live loading data
+	double temp_A_aa[] = { 1,-1,R,1,-1,1,-1,-1,R,1,-1,1,-1,-R,1,-1,-1,1,-1,-1,R,1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-R,1,-1,-1,1,-1,-1,R,1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-1,-R,1,-1,-1,1,-1,-R,1,-1,-1, };
+	ML_INT temp_A_ja[] = { 0,1,0,2,1,3,4,5,3,7,4,5,6,5,7,8,6,9,10,11,9,15,10,11,12,13,11,15,16,12,13,14,14,16,17,14,18,19,20,18,30,19,20,21,22,20,30,31,21,22,23,24,22,31,32,23,24,25,26,24,32,33,25,26,27,28,26,33,34,27,28,29,28,34,35,29, };
+	ML_INT temp_A_ia[] = { 0,2,4,5,8,10,11,13,16,17,20,22,23,26,29,30,32,35,36,39,41,42,45,48,49,52,55,56,59,62,63,66,69,70,72,75,76, };
+
+	double temp_M_aa[] = { C,C,C,C,C,C,C,C,C,C,C,C, };
+	ML_INT temp_M_ja[] = { 2,7,8,15,16,17,30,31,32,33,34,35, };
+	ML_INT temp_M_ia[] = { 0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12, };
+
+	double temp_original_b[] = { 0,Vs,0,0,Vs,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, };
+	double temp_b[] = { 0,Vs,0,0,Vs,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,Vs,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, }; //Voltage inputs
+
+	//Sizing for Dynamic Arrays
+	int A_aa_size = sizeof(temp_A_aa) / sizeof(temp_A_aa[0]);
+	int A_ja_size = sizeof(temp_A_ja) / sizeof(temp_A_ja[0]);
+	int A_ia_size = sizeof(temp_A_ia) / sizeof(temp_A_ia[0]);
+
+	int M_aa_size = sizeof(temp_M_aa) / sizeof(temp_M_aa[0]);
+	int M_ja_size = sizeof(temp_M_ja) / sizeof(temp_M_ja[0]);
+	int M_ia_size = sizeof(temp_M_ia) / sizeof(temp_M_ia[0]);
+
+	original_b_size = sizeof(temp_original_b) / sizeof(temp_original_b[0]);
+	b_size = sizeof(temp_b) / sizeof(temp_b[0]);
+
+	//Allocating Dynamic Memory
+	A_aa = new double[A_aa_size];
+	A_ja = new ML_INT[A_ja_size];
+	A_ia = new ML_INT[A_ia_size];
+
+	M_aa = new double[M_aa_size];
+	M_ja = new ML_INT[M_ja_size];
+	M_ia = new ML_INT[M_ia_size];
+
+	original_b = new double[original_b_size];
+	b = new double[b_size];
+
+	//Copy data into matrices
+	std::memcpy(A_aa, temp_A_aa, sizeof(temp_A_aa)); //For Matrix A
+	std::memcpy(A_ja, temp_A_ja, sizeof(temp_A_ja));
+	std::memcpy(A_ia, temp_A_ia, sizeof(temp_A_ia));
+
+	std::memcpy(M_aa, temp_M_aa, sizeof(temp_M_aa)); //For Matrix M
+	std::memcpy(M_ja, temp_M_ja, sizeof(temp_M_ja));
+	std::memcpy(M_ia, temp_M_ia, sizeof(temp_M_ia));
+
+	std::memcpy(original_b, temp_original_b, sizeof(temp_original_b)); //For Matrix b
+	std::memcpy(b, temp_b, sizeof(temp_b));
+
+
 	// ******************* 36 * 36 Matrix *******************
 	A.nr = 36;
 	A.nc = 36;
@@ -61,7 +115,6 @@ void populateMatrix() {
 	M.ja = M_ja;
 	M.aa = M_aa;
 
-	//TODO: Add definition for b in here
 
 
 	transientCurrentSolution = new double[A.nc];
@@ -73,10 +126,10 @@ void populateMatrix() {
 	transientNextSolution[0] = 1.;				//Sets our initial guess
 
 	//std::cout << "************** Printing M Matrix * *************" << std::endl;
-	//printSmallSparse(M);
+	printSmallSparse(M);
 
 	//std::cout << "************** Printing A Matrix * *************" << std::endl;
-	//printSmallSparse(A);
+	printSmallSparse(A);
 
 	/* allocate LHS and setup standard matrix for 1st step */
 
@@ -182,7 +235,7 @@ void runSimulation(double currentTimestep)
 		}
 
 		//Restore b and recalculate  h *bu
-		std::memcpy(b, original_b, sizeof(b));
+		std::memcpy(b, original_b, b_size * sizeof(b[0]));
 		vecScale(b, currentTimestep, A.nr);
 
 		prevTimestep = currentTimestep;

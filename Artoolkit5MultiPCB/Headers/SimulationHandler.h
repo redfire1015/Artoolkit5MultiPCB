@@ -20,17 +20,19 @@ extern double R;
 extern double Vs;
 
 extern spMATRIX A;
-extern double A_aa[];
-extern ML_INT A_ja[];
-extern ML_INT A_ia[];
+extern double* A_aa;
+extern ML_INT* A_ja;
+extern ML_INT* A_ia;
 
 extern spMATRIX M;
-extern double M_aa[];
-extern ML_INT M_ja[];
-extern ML_INT M_ia[];
+extern double* M_aa;
+extern ML_INT* M_ja;
+extern ML_INT* M_ia;
 
-extern double original_b[];
-extern double b[];
+extern double* original_b;
+extern int original_b_size;
+extern double* b;
+extern int b_size;
 //End Matrix Variables
 
 
