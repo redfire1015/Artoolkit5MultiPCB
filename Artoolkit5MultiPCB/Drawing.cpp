@@ -5,7 +5,15 @@
 GLuint textureID;
 GLuint VAO;		//Vertex Array Object ID
 
-float* verticies = new float(111 * 8); //Each Segment is made up of 8 Verticies
+float verticies[1332];// = new float(111 * 8); //Each Segment is made up of 8 Verticies
+
+struct Vertex
+{
+	float pos[2];
+	float tex[1] = { 0 };
+};
+
+std::vector<Vertex> vertices;
 
 int totalSegments = 0;
 int prevNumSegments = 0;
@@ -13,6 +21,7 @@ int prevNumSegments = 0;
 //TODO: Function that loads the PCB segments once
 void loadVertexToGPU() {
 
+	//Load Segments into Array
 	for (size_t i = 0; i < loadedPCB.getNumberOfLayers(); ++i)
 	{
 		const Layer& currentLayer = loadedPCB.getPCBLayers()[i];
@@ -79,18 +88,41 @@ void loadVertexToGPU() {
 			//glVertex2f(x4t, y4t);
 			//glEnd();
 
-			verticies[(j * 8) + (prevNumSegments * 8)] = x1t;
-			verticies[(j * 8) + (prevNumSegments * 8) + 1] = y1t;
-			verticies[(j * 8) + (prevNumSegments * 8) + 2] = x2t;
-			verticies[(j * 8) + (prevNumSegments * 8) + 3] = y2t;
-			verticies[(j * 8) + (prevNumSegments * 8) + 4] = x3t;
-			verticies[(j * 8) + (prevNumSegments * 8) + 5] = y3t;
-			verticies[(j * 8) + (prevNumSegments * 8) + 6] = x4t;
-			verticies[(j * 8) + (prevNumSegments * 8) + 7] = y4t;
+				// Example vertices
+			Vertex v1 = { {x1t, y1t} };
+			Vertex v2 = { {x2t, y2t} };
+			Vertex v3 = { {x3t, y3t} };
+			Vertex v4 = { {x4t, y4t} };
+
+			vertices.push_back(v1);
+			vertices.push_back(v2);
+			vertices.push_back(v3);
+
+			vertices.push_back(v2);
+			vertices.push_back(v3);
+			vertices.push_back(v4);
+
+
+			verticies[(j * 12) + (prevNumSegments * 12)] = x1t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 1] = y1t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 2] = x2t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 3] = y2t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 4] = x3t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 5] = y3t;
+
+			verticies[(j * 12) + (prevNumSegments * 12) + 6] = x2t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 7] = y2t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 8] = x3t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 9] = y3t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 10] = x4t;
+			verticies[(j * 12) + (prevNumSegments * 12) + 11] = y4t;
 		}
 		prevNumSegments += currentLayer.getNumberOfLayerSegments();
 	}
 	prevNumSegments = 0;
+	totalSegments = 111;
+
+
 
 	//GLuint vbo;
 
@@ -143,28 +175,40 @@ void drawPCB(ARdouble trans1[3][4]) {
 
 		//std::cout << transientNextSolution[30] << std::endl;
 		runSimulation(timeStep);
+
 	}
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(2, GL_FLOAT, sizeof(Vertex), vertices.data()->pos);
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(3, GL_FLOAT, 0, vertices.data()->tex);
+
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 
 
-	for (int i = 0; i < totalSegments * 8; i += 8)
-	{
-		glBegin(GL_TRIANGLES);
-		// The indices are going to depend on the data layout.
-		glVertex2f(verticies[i], verticies[i + 1]);
-		glVertex2f(verticies[i + 2], verticies[i + 3]);
-		glVertex2f(verticies[i + 4], verticies[i + 5]);
-		glEnd();
-
-		glBegin(GL_TRIANGLES);
-		glVertex2f(verticies[i + 2], verticies[i + 3]);
-		glVertex2f(verticies[i + 4], verticies[i + 5]);
-		glVertex2f(verticies[i + 6], verticies[i + 7]);
-		glEnd();
-	}
 
 
 	glPopMatrix();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void setColoursAndTextures(const Layer& currentLayer, const Segment& currentSegment) {
 

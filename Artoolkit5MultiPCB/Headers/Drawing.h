@@ -4,11 +4,14 @@
 //********************************************************//
 //						Dependancies
 //********************************************************//
-
+#define GLEW_STATIC 
 #include <GL/glew.h>
+
 #include <GL/glut.h>
 #include <AR/ar.h>
 #include <AR/gsub.h>
+
+#include <vector> 
 
 #include "SimulationHandler.h"
 #include "PCB.h"
@@ -20,7 +23,10 @@ extern ARHandle* arHandle;
 extern GLuint textureID;
 extern GLuint VAO; // Vertex Array Object ID
 
-extern float* verticies;
+// Create an empty vector 
+//extern std::vector<float> vertices;
+
+extern float verticies[1332];
 //********************************************************//
 //						Function Definition
 //********************************************************//

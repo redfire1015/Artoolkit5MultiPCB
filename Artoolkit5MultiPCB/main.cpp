@@ -20,6 +20,7 @@
 //End Standard Library Includes
 
 //My Includes
+#include "GL/glew.h"
 #include "Headers/Drawing.h"
 #include "Headers/PCBHandler.h"
 #include "Headers/GUI.h"
