@@ -23,10 +23,20 @@ extern ARHandle* arHandle;
 extern GLuint textureID;
 extern GLuint VAO; // Vertex Array Object ID
 
-// Create an empty vector 
-//extern std::vector<float> vertices;
+//Vertices Struct
+struct Vertex
+{
+	float pos[2];
+	float col[4] = { 0.0,0.0,0.0,0.0 };
+	float tex[1] = { 0.5 };
+};
 
-extern float verticies[1332];
+// Create an empty vector 
+extern std::vector<Vertex> vertices;
+
+//Setup Complete Checking Variable
+extern bool setupComplete;
+
 //********************************************************//
 //						Function Definition
 //********************************************************//

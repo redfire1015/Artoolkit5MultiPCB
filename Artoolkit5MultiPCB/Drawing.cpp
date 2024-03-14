@@ -1,22 +1,11 @@
 #include "Headers/Drawing.h"
 
-#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
-
 GLuint textureID;
 GLuint VAO;		//Vertex Array Object ID
 
-float verticies[1332];// = new float(111 * 8); //Each Segment is made up of 8 Verticies
-
-struct Vertex
-{
-	float pos[2];
-	float tex[1] = { 0 };
-};
-
 std::vector<Vertex> vertices;
 
-int totalSegments = 0;
-int prevNumSegments = 0;
+bool setupComplete = false;
 
 //TODO: Function that loads the PCB segments once
 void loadVertexToGPU() {
@@ -31,14 +20,6 @@ void loadVertexToGPU() {
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
 
 			setColoursAndTextures(currentLayer, currentSegment);
-
-			//glLineWidth(currentSegment.getSegmentThickness() * 7);  // Change this value based on your default line thickness
-			//glBegin(GL_LINES);
-			//glColor3f(1.0, 1.0, 1.0);  // White color, change values as needed
-			//glVertex2f(currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2); //Start XY
-			//glVertex2f(currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getEndCoord().getYCoord() * -2); //End XY
-			//glEnd();
-			//glRectf(-currentSegment.getStartCoord().getXCoord() * 2, currentSegment.getEndCoord().getXCoord() * 2, currentSegment.getStartCoord().getYCoord() * -2, currentSegment.getEndCoord().getYCoord() * -2);
 
 			// Calculate the direction vector
 			float x1 = currentSegment.getStartCoord().getXCoord() * 2;
@@ -76,23 +57,33 @@ void loadVertexToGPU() {
 			float x4t = x2 - px * halfThickness;
 			float y4t = y2 - py * halfThickness;
 
-
-			//glBegin(GL_TRIANGLES);
-			//// Draw the rectangle using GL_TRIANGLES
-			//glVertex2f(x1t, y1t);
-			//glVertex2f(x2t, y2t);
-			//glVertex2f(x3t, y3t);
-
-			//glVertex2f(x2t, y2t);
-			//glVertex2f(x3t, y3t);
-			//glVertex2f(x4t, y4t);
-			//glEnd();
-
-				// Example vertices
 			Vertex v1 = { {x1t, y1t} };
 			Vertex v2 = { {x2t, y2t} };
 			Vertex v3 = { {x3t, y3t} };
 			Vertex v4 = { {x4t, y4t} };
+
+			if (currentLayer.getLayerName() == "F.Cu") {
+
+				float red[] = { 1.0 ,0.0,0.0,1.0 };
+				for (int k = 0; k < sizeof(v1.col) / sizeof(v1.col[0]); k++)
+				{
+					v1.col[k] = red[k];
+					v2.col[k] = red[k];
+					v3.col[k] = red[k];
+					v4.col[k] = red[k];
+				}
+
+			}
+			if (currentLayer.getLayerName() == "B.Cu") {
+				float blue[] = { 0.0 ,0.0,1.0,1.0 };
+				for (int k = 0; k < sizeof(v1.col) / sizeof(v1.col[0]); k++)
+				{
+					v1.col[k] = blue[k];
+					v2.col[k] = blue[k];
+					v3.col[k] = blue[k];
+					v4.col[k] = blue[k];
+				}
+			}
 
 			vertices.push_back(v1);
 			vertices.push_back(v2);
@@ -101,41 +92,41 @@ void loadVertexToGPU() {
 			vertices.push_back(v2);
 			vertices.push_back(v3);
 			vertices.push_back(v4);
-
-
-			verticies[(j * 12) + (prevNumSegments * 12)] = x1t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 1] = y1t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 2] = x2t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 3] = y2t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 4] = x3t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 5] = y3t;
-
-			verticies[(j * 12) + (prevNumSegments * 12) + 6] = x2t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 7] = y2t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 8] = x3t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 9] = y3t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 10] = x4t;
-			verticies[(j * 12) + (prevNumSegments * 12) + 11] = y4t;
 		}
-		prevNumSegments += currentLayer.getNumberOfLayerSegments();
 	}
-	prevNumSegments = 0;
-	totalSegments = 111;
 
+	glewInit();
+	// Step 1: Generate and Bind a VAO
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
+	// Step 2: Generate and Bind a VBO
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-	//GLuint vbo;
+	// Step 3: Fill the VBO with Data
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-	//glGenVertexArrays(1, &VAO);	//Create VAO
-	//glBindVertexArray(VAO);		//Set as Active
+	// Step 4: Set Up Vertex Attribute Pointers
+	// Position attribute
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
+	glEnableVertexAttribArray(0);
 
-	//// Generate buffer objects
-	//glGenBuffers(1, &vbo);
-	//// Bind and upload vertex data
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	// 
-	//glBindVertexArray(0);		//Remove from Active
+	// Colour attribute
+	//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, col));
+	//glEnableVertexAttribArray(1);
+	glColorPointer(4, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, col));
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	// Texture attribute
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex));
+	glEnableVertexAttribArray(2);
+
+	glBindVertexArray(0);				//Remove from Active
+	glBindBuffer(GL_ARRAY_BUFFER, 0);	//Remove from Active
+
+	setupComplete = true;
 }
 
 
@@ -159,8 +150,9 @@ void drawPCB(ARdouble trans1[3][4]) {
 	arGetDebugMode(arHandle, &debugMode);
 
 
-	if (simulationStarted)
+	if (simulationStarted && setupComplete)
 	{
+		glBindTexture(GL_TEXTURE_1D, textureID);
 		//Get the Current time
 		currentTime = std::chrono::system_clock::now();
 
@@ -175,19 +167,30 @@ void drawPCB(ARdouble trans1[3][4]) {
 
 		//std::cout << transientNextSolution[30] << std::endl;
 		runSimulation(timeStep);
-
 	}
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(2, GL_FLOAT, sizeof(Vertex), vertices.data()->pos);
 
-	glEnableClientState(GL_COLOR_ARRAY);
-	glColorPointer(3, GL_FLOAT, 0, vertices.data()->tex);
+	if (setupComplete)
+	{
+		glClearColor(0.0, 0.0, 0.0, 0.0);
+		//glEnableClientState(GL_VERTEX_ARRAY);
+		//glVertexPointer(2, GL_FLOAT, sizeof(Vertex), vertices.data()->pos);
 
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
+		//glEnableClientState(GL_COLOR_ARRAY);
+		//glColorPointer(3, GL_FLOAT, sizeof(Vertex), vertices.data()->tex);
 
+		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		//glDisableClientState(GL_VERTEX_ARRAY);
+		//glDisableClientState(GL_COLOR_ARRAY);
 
+		//glBindVertexArray(VAO);
+		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_1D, textureID);
+
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	}
 
 
 	glPopMatrix();
