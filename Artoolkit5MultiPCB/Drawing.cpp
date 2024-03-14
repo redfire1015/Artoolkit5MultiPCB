@@ -2,6 +2,10 @@
 
 GLuint textureID;
 
+void loadVertexToGPU() {
+}
+//TODO: Function that loads the PCB segments once
+
 void drawPCB(ARdouble trans1[3][4]) {
 
 	ARdouble  gl_para[16];
