@@ -51,6 +51,7 @@ void menu(int id)
 
 		loadSettings(charFilePath);//Load Settings from the Selected File Path
 		refreshSettings();
+		loadVertexToGPU();
 
 		break;
 	}
@@ -62,6 +63,7 @@ void menu(int id)
 		}
 		loadSettings(charFilePath);//Load Settings from the Selected File Path
 		refreshSettings();
+		loadVertexToGPU();
 		break;
 	}
 

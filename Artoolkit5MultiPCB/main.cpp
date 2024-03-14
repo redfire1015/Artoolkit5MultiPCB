@@ -19,6 +19,13 @@
 #include <vector>
 //End Standard Library Includes
 
+//My Includes
+#include "Headers/Drawing.h"
+#include "Headers/PCBHandler.h"
+#include "Headers/GUI.h"
+#include "Headers/SettingsHandler.h"
+//End My Includes
+
 //Graphics and Platform Specific Includes
 #ifndef __APPLE__
 #  ifdef _WIN32
@@ -43,14 +50,6 @@
 #define                 CPARA_NAME       "Data/paulCamCalib.dat"
 #define                 CONFIG_NAME      "Data/marker.dat"
 //End ARToolkit Parameter Defines
-
-//My Includes
-#include "Headers/PCBHandler.h"
-#include "Headers/GUI.h"
-#include "Headers/Drawing.h"
-#include "Headers/SettingsHandler.h"
-//End My Includes
-
 
 
 //Ar Toolkit Global Variables

@@ -5,10 +5,10 @@
 //						Dependancies
 //********************************************************//
 
+#include <GL/glew.h>
+#include <GL/glut.h>
 #include <AR/ar.h>
 #include <AR/gsub.h>
-#include <GL/glut.h>
-
 
 #include "SimulationHandler.h"
 #include "PCB.h"
@@ -16,8 +16,11 @@
 
 extern PCB loadedPCB;
 extern ARHandle* arHandle;
-extern GLuint textureID;
 
+extern GLuint textureID;
+extern GLuint VAO; // Vertex Array Object ID
+
+extern float* verticies;
 //********************************************************//
 //						Function Definition
 //********************************************************//

@@ -1,57 +1,22 @@
 #include "Headers/Drawing.h"
 
+#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
+
 GLuint textureID;
+GLuint VAO;		//Vertex Array Object ID
 
-void loadVertexToGPU() {
-}
+float* verticies = new float(111 * 8); //Each Segment is made up of 8 Verticies
+
+int totalSegments = 0;
+int prevNumSegments = 0;
+
 //TODO: Function that loads the PCB segments once
+void loadVertexToGPU() {
 
-void drawPCB(ARdouble trans1[3][4]) {
-
-	ARdouble  gl_para[16];
-	int       debugMode;
-
-	/* load the camera transformation matrix */
-	glMatrixMode(GL_MODELVIEW);
-	argConvGlpara(trans1, gl_para);
-#ifdef ARDOUBLE_IS_FLOAT
-	glLoadMatrixf(gl_para);
-#else
-	glLoadMatrixd(gl_para);
-#endif
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(0.0f, 0.0f, 10.0f);
-	arGetDebugMode(arHandle, &debugMode);
-
-
-	if (simulationStarted)
-	{
-		//Get the Current time
-		currentTime = std::chrono::system_clock::now();
-
-		//Calculate Time Step between last function call
-		double timeStep = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
-		previousTime = currentTime;
-
-		// Calculate the difference
-		timeSinceSimulationStart += timeStep;
-
-		//std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
-
-		//std::cout << transientNextSolution[30] << std::endl;
-
-
-		runSimulation(timeStep);
-	}
-
-	//Print information about segments and polygons
 	for (size_t i = 0; i < loadedPCB.getNumberOfLayers(); ++i)
 	{
-
 		const Layer& currentLayer = loadedPCB.getPCBLayers()[i];
-		// Print information about segments
+
 		for (int j = 0; j < currentLayer.getNumberOfLayerSegments(); ++j)
 		{
 			const Segment& currentSegment = currentLayer.getLayerSegments()[j];
@@ -103,21 +68,102 @@ void drawPCB(ARdouble trans1[3][4]) {
 			float y4t = y2 - py * halfThickness;
 
 
-			glBegin(GL_TRIANGLES);
-			// Draw the rectangle using GL_TRIANGLES
-			glVertex2f(x1t, y1t);
-			glVertex2f(x2t, y2t);
-			glVertex2f(x3t, y3t);
+			//glBegin(GL_TRIANGLES);
+			//// Draw the rectangle using GL_TRIANGLES
+			//glVertex2f(x1t, y1t);
+			//glVertex2f(x2t, y2t);
+			//glVertex2f(x3t, y3t);
 
-			glVertex2f(x2t, y2t);
-			glVertex2f(x3t, y3t);
-			glVertex2f(x4t, y4t);
-			glEnd();
+			//glVertex2f(x2t, y2t);
+			//glVertex2f(x3t, y3t);
+			//glVertex2f(x4t, y4t);
+			//glEnd();
+
+			verticies[(j * 8) + (prevNumSegments * 8)] = x1t;
+			verticies[(j * 8) + (prevNumSegments * 8) + 1] = y1t;
+			verticies[(j * 8) + (prevNumSegments * 8) + 2] = x2t;
+			verticies[(j * 8) + (prevNumSegments * 8) + 3] = y2t;
+			verticies[(j * 8) + (prevNumSegments * 8) + 4] = x3t;
+			verticies[(j * 8) + (prevNumSegments * 8) + 5] = y3t;
+			verticies[(j * 8) + (prevNumSegments * 8) + 6] = x4t;
+			verticies[(j * 8) + (prevNumSegments * 8) + 7] = y4t;
 		}
+		prevNumSegments += currentLayer.getNumberOfLayerSegments();
+	}
+	prevNumSegments = 0;
+
+	//GLuint vbo;
+
+	//glGenVertexArrays(1, &VAO);	//Create VAO
+	//glBindVertexArray(VAO);		//Set as Active
+
+	//// Generate buffer objects
+	//glGenBuffers(1, &vbo);
+	//// Bind and upload vertex data
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	// 
+	//glBindVertexArray(0);		//Remove from Active
+}
+
+
+void drawPCB(ARdouble trans1[3][4]) {
+
+	ARdouble  gl_para[16];
+	int       debugMode;
+
+	/* load the camera transformation matrix */
+	glMatrixMode(GL_MODELVIEW);
+	argConvGlpara(trans1, gl_para);
+#ifdef ARDOUBLE_IS_FLOAT
+	glLoadMatrixf(gl_para);
+#else
+	glLoadMatrixd(gl_para);
+#endif
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, 10.0f);	//Sets polygons 10 units above the pcb
+	arGetDebugMode(arHandle, &debugMode);
+
+
+	if (simulationStarted)
+	{
+		//Get the Current time
+		currentTime = std::chrono::system_clock::now();
+
+		//Calculate Time Step between last function call
+		double timeStep = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - previousTime).count();
+		previousTime = currentTime;
+
+		// Calculate the difference
+		timeSinceSimulationStart += timeStep;
+
+		//std::cout << "Time since simulation start: " << timeSinceSimulationStart / 1000.0 << std::endl;
+
+		//std::cout << transientNextSolution[30] << std::endl;
+		runSimulation(timeStep);
 	}
 
-	glPopMatrix();
 
+	for (int i = 0; i < totalSegments * 8; i += 8)
+	{
+		glBegin(GL_TRIANGLES);
+		// The indices are going to depend on the data layout.
+		glVertex2f(verticies[i], verticies[i + 1]);
+		glVertex2f(verticies[i + 2], verticies[i + 3]);
+		glVertex2f(verticies[i + 4], verticies[i + 5]);
+		glEnd();
+
+		glBegin(GL_TRIANGLES);
+		glVertex2f(verticies[i + 2], verticies[i + 3]);
+		glVertex2f(verticies[i + 4], verticies[i + 5]);
+		glVertex2f(verticies[i + 6], verticies[i + 7]);
+		glEnd();
+	}
+
+
+	glPopMatrix();
 }
 
 void setColoursAndTextures(const Layer& currentLayer, const Segment& currentSegment) {
