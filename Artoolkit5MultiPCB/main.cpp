@@ -115,6 +115,8 @@ int main(int argc, char* argv[])
 	return (0);
 }
 
+
+
 static void   keyEvent(unsigned char key, int x, int y)
 {
 	int     debug;
@@ -127,37 +129,66 @@ static void   keyEvent(unsigned char key, int x, int y)
 		exit(0);
 	}
 
-	if (key == 'd') {
-		arGetDebugMode(arHandle, &debug);
-		debug = 1 - debug;
-		arSetDebugMode(arHandle, debug);
-	}
+	//if (key == 'd') {
+	//	arGetDebugMode(arHandle, &debug);
+	//	debug = 1 - debug;
+	//	arSetDebugMode(arHandle, debug);
+	//}
+
+	//if (key == '1') {
+	//	arGetDebugMode(arHandle, &debug);
+	//	if (debug) {
+	//		arGetLabelingThresh(arHandle, &thresh);
+	//		thresh -= 5;
+	//		if (thresh < 0) thresh = 0;
+	//		arSetLabelingThresh(arHandle, thresh);
+	//		ARLOG("thresh = %d\n", thresh);
+	//	}
+	//}
+	//if (key == '2') {
+	//	arGetDebugMode(arHandle, &debug);
+	//	if (debug) {
+	//		arGetLabelingThresh(arHandle, &thresh);
+	//		thresh += 5;
+	//		if (thresh > 255) thresh = 255;
+	//		arSetLabelingThresh(arHandle, thresh);
+	//		ARLOG("thresh = %d\n", thresh);
+	//	}
+	//}
+
+	//if (key == ' ') {
+	//	robustFlag = 1 - robustFlag;
+	//	if (robustFlag) ARLOG("Robust estimation mode.\n");
+	//	else             ARLOG("Normal estimation mode.\n");
+	//}
 
 	if (key == '1') {
-		arGetDebugMode(arHandle, &debug);
-		if (debug) {
-			arGetLabelingThresh(arHandle, &thresh);
-			thresh -= 5;
-			if (thresh < 0) thresh = 0;
-			arSetLabelingThresh(arHandle, thresh);
-			ARLOG("thresh = %d\n", thresh);
+		if (simulationStarted)
+		{
+			toggle1 = readSettings.getInputVoltage() - toggle1;
+			modifySimulation(1, toggle1);
 		}
 	}
 	if (key == '2') {
-		arGetDebugMode(arHandle, &debug);
-		if (debug) {
-			arGetLabelingThresh(arHandle, &thresh);
-			thresh += 5;
-			if (thresh > 255) thresh = 255;
-			arSetLabelingThresh(arHandle, thresh);
-			ARLOG("thresh = %d\n", thresh);
+		if (simulationStarted)
+		{
+			toggle2 = readSettings.getInputVoltage() - toggle2;
+			modifySimulation(4, toggle2);
 		}
 	}
-
-	if (key == ' ') {
-		robustFlag = 1 - robustFlag;
-		if (robustFlag) ARLOG("Robust estimation mode.\n");
-		else             ARLOG("Normal estimation mode.\n");
+	if (key == '3') {
+		if (simulationStarted)
+		{
+			toggle3 = readSettings.getInputVoltage() - toggle3;
+			modifySimulation(10, toggle3);
+		}
+	}
+	if (key == '4') {
+		if (simulationStarted)
+		{
+			toggle4 = readSettings.getInputVoltage() - toggle4;
+			modifySimulation(19, toggle4);
+		}
 	}
 }
 

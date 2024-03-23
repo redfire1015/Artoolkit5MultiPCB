@@ -14,6 +14,11 @@
 //						Variables
 //********************************************************//
 
+extern int toggle1;
+extern int toggle2;
+extern int toggle3;
+extern int toggle4;
+
 //Matrix Variables
 extern double C;
 extern double R;
@@ -62,6 +67,9 @@ extern bool simulationStarted;
 //********************************************************//
 
 void populateMatrix();
+
+//Function to modify Input sources via Numbers
+void modifySimulation(int index, int value);
 
 //Function to create the right click context menu
 void runSimulation(double timestep);

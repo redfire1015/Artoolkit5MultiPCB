@@ -98,5 +98,5 @@ void refreshSettings() {
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//Can Use linear or nearest although nearest makes sense as we are using the same texture for the entire vertex. 
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//Additionally linear can cause problems during the simulation start when the values are slightly negative
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-
+	glBindTexture(GL_TEXTURE_1D, 0);
 }

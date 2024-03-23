@@ -1,5 +1,11 @@
 #include "Headers/SimulationHandler.h"
 
+//Toggle Variable from Main
+int toggle1;
+int toggle2;
+int toggle3;
+int toggle4;
+
 
 //Matrix Variables
 double C = 470e-6;	//Default Capacitance
@@ -49,6 +55,10 @@ bool simulationStarted = false;
 void populateMatrix() {
 
 	Vs = readSettings.getInputVoltage(); //Get the Input voltage from incomming settings
+	toggle1 = readSettings.getInputVoltage();
+	toggle2 = readSettings.getInputVoltage();
+	toggle3 = readSettings.getInputVoltage();
+	toggle4 = readSettings.getInputVoltage();
 
 	//Some Temp arrays which contain the matrix data
 	//These arrays could be replaced with live loading data
@@ -211,8 +221,21 @@ void populateMatrix() {
 	}
 }
 
-int iterationsSimulation = 0;
+void modifySimulation(int index, int value) {
+	std::cout << "Changing Input Voltage" << std::endl;
+	std::cout << "Voltage:	" << value << std::endl;
 
+	original_b[index] = value;
+	b[index] = value;
+}
+
+
+
+
+
+
+
+long long int iterationsSimulation = 0;
 void runSimulation(double currentTimestep)
 {
 	iterationsSimulation++;
@@ -261,5 +284,7 @@ void runSimulation(double currentTimestep)
 	{
 		transientCurrentSolution[m] = transientNextSolution[m];
 	}
+
+	//std::cout << transientCurrentSolution[31] << std::endl; //Debug
 
 }
